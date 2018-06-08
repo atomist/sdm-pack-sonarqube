@@ -1,4 +1,4 @@
-# @atomist/sdm-pack-sloc
+# @atomist/sdm-pack-sonarqube
 
 Extension Pack for an Atomist SDM to integrate [SonarQube](https://www.sonarqube.org).
 
