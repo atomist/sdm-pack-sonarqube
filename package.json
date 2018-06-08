@@ -65,6 +65,7 @@
     "watch:compile": "tsc --project . --watch",
     "watch": "supervisor --watch build --quiet --exec npm -- run start"
   },
+  "main": "dist/index.js",
   "engines": {
     "node": "9.x.x",
     "npm": "6.x.x"
