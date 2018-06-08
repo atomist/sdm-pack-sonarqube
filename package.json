@@ -59,7 +59,7 @@
     "fmt": "tsfmt --replace",
     "lint": "tslint --format verbose --project . --exclude \"{build,node_modules}/**\" \"**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
-    "test": "mocha --require espower-typescript/guess --exit \"test/{*.ts,!(api|benchmark|bitbucket-api)/**/*.ts}\"",
+    "test": "mocha --require espower-typescript/guess --exit \"test/**/*.ts\"",
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.ts}\"",
     "typedoc": "typedoc --mode modules --excludeExternals --out build/typedoc src",
     "watch:compile": "tsc --project . --watch",

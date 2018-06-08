@@ -9,7 +9,6 @@
     "declaration": true,
     "sourceMap": true,
     "outDir": "dist",
-    "rootDir": "src",
     "lib": [
       "DOM",
       "ES2017",
@@ -25,7 +24,7 @@
     "emitDecoratorMetadata": true
   },
   "include": [
-    "src"
+    "src/**/*.ts"
   ],
   "compileOnSave": true,
   "buildOnSave": false,
