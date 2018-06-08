@@ -1,6 +1,6 @@
 {
   "name": "@atomist/sdm-pack-sonarqube",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Extension Pack for an Atomist SDM to integrate SonarQube",
   "author": {
     "name": "Atomist, Inc."
