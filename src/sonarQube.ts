@@ -21,7 +21,7 @@ import {
 } from "./support/sonarQubeReviewer";
 
 // tslint:disable-next-line:no-var-requires
-const pj = require("./package.json");
+const pj = require("../package.json");
 
 export const SonarQubeSupport: ExtensionPack = {
     name: pj.name,
