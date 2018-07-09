@@ -34,13 +34,21 @@ export function sonarQubeReviewer(options: SonarCubeOptions): ReviewerRegistrati
         name: "SonarQube review",
         pushTest: ToDefaultBranch,
         action: async pli => {
-            const command = `mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar \
-    -Dsonar.host.url=${options.url} \
-    -Dsonar.organization=${options.org} \
-    -Dsonar.login=${options.token}`;
+            const command = ["mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar"];
+
+            if (options.url) {
+                command.push(`-Dsonar.host.url=${options.url}`);
+            }
+            if (options.org) {
+                command.push(`-Dsonar.organization=${options.org}`);
+            }
+            if (options.token) {
+                command.push(`-Dsonar.login=${options.token}`);
+            }
+
             const log = new StringCapturingProgressLog();
             await spawnAndWatch(
-                asSpawnCommand(command),
+                asSpawnCommand(command.join(" ")),
                 {
                     cwd: pli.project.baseDir,
                 },
