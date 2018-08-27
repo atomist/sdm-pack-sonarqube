@@ -24,8 +24,8 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "@atomist/sdm": ">= 0.3.2",
-    "@atomist/automation-client": ">= 0.18.0"
+    "@atomist/sdm": "*",
+    "@atomist/automation-client": "*"
   },
   "devDependencies": {
     "@atomist/automation-client": "1.0.0-M.1",
