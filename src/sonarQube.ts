@@ -26,7 +26,7 @@ export const SonarQubeSupport: ExtensionPack = {
     configure: sdm => {
         const options = sdm.configuration.sdm.sonar as SonarCubeOptions;
         if (!!options && options.enabled === true) {
-            sdm.addReviewerRegistration(sonarQubeReviewer(options));
+            sdm.addCodeInspectionCommand(sonarQubeReviewer(options));
         }
     },
 };

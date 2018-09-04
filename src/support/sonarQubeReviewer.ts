@@ -15,6 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
+import { isLocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { ReviewerRegistration, ToDefaultBranch } from "@atomist/sdm";
 import { StringCapturingProgressLog } from "@atomist/sdm/api-helper/log/StringCapturingProgressLog";
 import {
@@ -33,7 +34,10 @@ export function sonarQubeReviewer(options: SonarCubeOptions): ReviewerRegistrati
     return {
         name: "SonarQube review",
         pushTest: ToDefaultBranch,
-        action: async pli => {
+        inspection: async (project, pli) => {
+            if (!isLocalProject(project)) {
+                throw new Error(`Can only perform review on local project: had ${project.id.url}`);
+            }
             const command = ["mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar"];
 
             if (options.url) {
@@ -50,7 +54,7 @@ export function sonarQubeReviewer(options: SonarCubeOptions): ReviewerRegistrati
             await spawnAndWatch(
                 asSpawnCommand(command.join(" ")),
                 {
-                    cwd: pli.project.baseDir,
+                    cwd: project.baseDir,
                 },
                 log,
             );
@@ -60,7 +64,7 @@ export function sonarQubeReviewer(options: SonarCubeOptions): ReviewerRegistrati
             await pli.addressChannels(`Analysis at ${parsed[ 0 ]}`);
 
             return {
-                repoId: pli.id,
+                repoId: project.id,
                 comments: [],
             };
         },
