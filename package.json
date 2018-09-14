@@ -54,7 +54,7 @@
     "test": "test"
   },
   "scripts": {
-    "build": "npm-run-all lint compile test",
+    "build": "npm-run-all lint compile",
     "clean": "npm-run-all clean:js clean:build",
     "clean:benchmark": "rimraf isolate-*-v8.log",
     "clean:build": "rimraf *-v8.log profile.txt build",
