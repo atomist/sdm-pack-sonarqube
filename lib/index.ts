@@ -14,19 +14,8 @@
  * limitations under the License.
  */
 
-import { ExtensionPack } from "@atomist/sdm";
-import { metadata } from "@atomist/sdm/api-helper/misc/extensionPack";
-import {
-    SonarCubeOptions,
+export { SonarQubeSupport } from "./sonarQube";
+export {
     sonarQubeReviewer,
+    SonarCubeOptions,
 } from "./support/sonarQubeReviewer";
-
-export const SonarQubeSupport: ExtensionPack = {
-    ...metadata(),
-    configure: sdm => {
-        const options = sdm.configuration.sdm.sonar as SonarCubeOptions;
-        if (!!options && options.enabled === true) {
-            sdm.addCodeInspectionCommand(sonarQubeReviewer(options));
-        }
-    },
-};
