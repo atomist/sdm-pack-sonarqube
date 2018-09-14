@@ -24,6 +24,8 @@
   "bugs": {
     "url": "https://github.com/atomist/sdm-pack-sonarqube/issues"
   },
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "dependencies": {},
   "peerDependencies": {
     "@atomist/sdm": "*",

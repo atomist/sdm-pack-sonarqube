@@ -18,3 +18,5 @@ yarn.lock
 schema.json
 scratch.txt
 graphql.config.json
+*.ts
+!*.d.ts
