@@ -23,8 +23,9 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": [
-    "lib/**/*.ts"
+  "exclude": [
+    "node_modules",
+    "legal"
   ],
   "compileOnSave": true,
   "buildOnSave": false,
