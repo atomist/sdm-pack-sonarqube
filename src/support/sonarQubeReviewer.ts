@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
-import { isLocalProject } from "@atomist/automation-client/project/local/LocalProject";
-import { ReviewerRegistration, ToDefaultBranch } from "@atomist/sdm";
-import { StringCapturingProgressLog } from "@atomist/sdm/api-helper/log/StringCapturingProgressLog";
+import {
+    isLocalProject,
+    logger,
+} from "@atomist/automation-client";
 import {
     asSpawnCommand,
+    ReviewerRegistration,
     spawnAndWatch,
-} from "@atomist/sdm/api-helper/misc/spawned";
+    StringCapturingProgressLog,
+    ToDefaultBranch,
+} from "@atomist/sdm";
 
 export interface SonarCubeOptions {
     enabled: boolean;
