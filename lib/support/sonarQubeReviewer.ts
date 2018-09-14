@@ -15,13 +15,13 @@
  */
 
 import {
+    asSpawnCommand,
     isLocalProject,
     logger,
+    spawnAndWatch,
 } from "@atomist/automation-client";
 import {
-    asSpawnCommand,
     ReviewerRegistration,
-    spawnAndWatch,
     StringCapturingProgressLog,
     ToDefaultBranch,
 } from "@atomist/sdm";
