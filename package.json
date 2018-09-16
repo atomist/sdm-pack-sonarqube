@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/atomist/sdm-pack-sonarqube/issues"
   },
-  "main": "./index.js",
+  "main": "dist/index.js",
   "types": "./index.d.ts",
   "dependencies": {},
   "peerDependencies": {
@@ -32,8 +32,8 @@
     "@atomist/automation-client": "*"
   },
   "devDependencies": {
-    "@atomist/automation-client": "1.0.0-master.20180914103733",
-    "@atomist/sdm": "1.0.0-master.20180914101315",
+    "@atomist/automation-client": "1.0.0-M.4",
+    "@atomist/sdm": "1.0.0-M.4",
     "@types/lodash": "^4.14.109",
     "@types/mocha": "^2.2.48",
     "@types/node": "^9.4.1",
@@ -72,7 +72,6 @@
     "watch:compile": "tsc --project . --watch",
     "watch": "supervisor --watch build --quiet --exec npm -- run start"
   },
-  "main": "dist/index.js",
   "engines": {
     "node": "9.x.x",
     "npm": "6.x.x"
