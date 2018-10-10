@@ -59,5 +59,5 @@ export function sonarQubeSupport(options: SonarQubeSupportOptions): ExtensionPac
                 }
             }
         },
-    }
-};
+    };
+}
