@@ -15,20 +15,49 @@
  */
 
 import {
+    AutoCodeInspection,
     ExtensionPack,
     metadata,
+    ReviewListenerRegistration,
 } from "@atomist/sdm";
-import {
-    SonarCubeOptions,
-    sonarQubeReviewer,
-} from "./support/sonarQubeReviewer";
+import { sonarQubeReviewer } from "./support/sonarQubeReviewer";
 
-export const SonarQubeSupport: ExtensionPack = {
-    ...metadata(),
-    configure: sdm => {
-        const options = sdm.configuration.sdm.sonar as SonarCubeOptions;
-        if (!!options && options.enabled === true) {
-            sdm.addCodeInspectionCommand(sonarQubeReviewer(options));
-        }
-    },
+/**
+ * Options determining what Spring functionality is activated.
+ */
+export interface SonarQubeSupportOptions {
+
+    enabled: boolean;
+    url: string;
+    org: string;
+    token: string;
+
+    /**
+     * Inspect goal to add inspections to.
+     * Review functionality won't work otherwise.
+     */
+    inspectGoal?: AutoCodeInspection;
+
+    /**
+     * Review listeners that let you publish review results.
+     */
+    reviewListeners?: ReviewListenerRegistration | ReviewListenerRegistration[];
+}
+
+export function sonarQubeSupport(options: SonarQubeSupportOptions): ExtensionPack {
+    return {
+        ...metadata(),
+        configure: () => {
+
+            if (!!options && options.enabled && !!options.inspectGoal) {
+                options.inspectGoal.with(sonarQubeReviewer(options));
+
+                if (options.reviewListeners) {
+                    const listeners = Array.isArray(options.reviewListeners) ?
+                        options.reviewListeners : [options.reviewListeners];
+                    listeners.forEach(l => options.inspectGoal.withListener(l));
+                }
+            }
+        },
+    }
 };

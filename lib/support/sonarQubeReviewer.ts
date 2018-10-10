@@ -25,15 +25,9 @@ import {
     StringCapturingProgressLog,
     ToDefaultBranch,
 } from "@atomist/sdm";
+import { SonarQubeSupportOptions } from "../sonarQube";
 
-export interface SonarCubeOptions {
-    enabled: boolean;
-    url: string;
-    org: string;
-    token: string;
-}
-
-export function sonarQubeReviewer(options: SonarCubeOptions): ReviewerRegistration {
+export function sonarQubeReviewer(options: SonarQubeSupportOptions): ReviewerRegistration {
     return {
         name: "SonarQube review",
         pushTest: ToDefaultBranch,

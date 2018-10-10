@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-export { SonarQubeSupport } from "./lib/sonarQube";
+export {
+    sonarQubeSupport,
+    SonarQubeSupportOptions,
+} from "./lib/sonarQube";
 export {
     sonarQubeReviewer,
-    SonarCubeOptions,
 } from "./lib/support/sonarQubeReviewer";
