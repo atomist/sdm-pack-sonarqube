@@ -1,7 +1,7 @@
 # @atomist/sdm-pack-sonarqube
 
 [![atomist sdm goals](http://badge.atomist.com/T29E48P34/atomist/sdm-pack-sonarqube/4587b3f5-9c80-4fa9-a978-79e2daf89e56)](https://app.atomist.com/workspace/T29E48P34)
-[![npm version](https://img.shields.io/npm/v/@atomist/sdm-pack-sonarqubec.svg)](https://www.npmjs.com/package/@atomist/sdm-pack-sonarqube)
+[![npm version](https://img.shields.io/npm/v/@atomist/sdm-pack-sonarqube.svg)](https://www.npmjs.com/package/@atomist/sdm-pack-sonarqube)
 
 Extension Pack for an Atomist SDM to integrate [SonarQube](https://www.sonarqube.org).
 
