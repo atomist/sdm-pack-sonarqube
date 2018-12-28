@@ -20,7 +20,10 @@ import {
     metadata,
     ReviewListenerRegistration,
 } from "@atomist/sdm";
-import { mvnSonarQubeReviewer, sonarQubeReviewer } from "./support/sonarQubeReviewer";
+import {
+    mvnSonarQubeReviewer,
+    sonarQubeReviewer,
+} from "./support/sonarQubeReviewer";
 
 /**
  * Options determining what Spring functionality is activated.

@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-import { isLocalProject, logger, ProjectReview } from "@atomist/automation-client";
-import { CodeInspection, spawnLog, StringCapturingProgressLog } from "@atomist/sdm";
+import {
+    isLocalProject,
+    logger,
+    ProjectReview,
+} from "@atomist/automation-client";
+import {
+    CodeInspection,
+    spawnLog,
+    StringCapturingProgressLog,
+} from "@atomist/sdm";
 import { SonarQubeSupportOptions } from "../../sonarQube";
 
 export const mvnScanner: CodeInspection<ProjectReview, SonarQubeSupportOptions> = async (project, pli) => {
