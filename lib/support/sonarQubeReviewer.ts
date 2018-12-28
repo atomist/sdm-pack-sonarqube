@@ -21,52 +21,28 @@ import {
     spawnAndWatch,
 } from "@atomist/automation-client";
 import {
+    not,
     ReviewerRegistration,
-    StringCapturingProgressLog,
-    ToDefaultBranch,
 } from "@atomist/sdm";
+import { IsMaven } from "@atomist/sdm-pack-spring";
 import { SonarQubeSupportOptions } from "../sonarQube";
+import { mvnScanner } from "./scanners/mvnScanner";
+import { sonarAgentScanner } from "./scanners/sonarAgentScanner";
 
-export function sonarQubeReviewer(options: SonarQubeSupportOptions): ReviewerRegistration {
+export function mvnSonarQubeReviewer(options: SonarQubeSupportOptions): ReviewerRegistration<SonarQubeSupportOptions> {
     return {
-        name: "SonarQube review",
-        pushTest: ToDefaultBranch,
-        inspection: async (project, pli) => {
-            if (!isLocalProject(project)) {
-                throw new Error(`Can only perform review on local project: had ${project.id.url}`);
-            }
-            const command = ["mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar"];
-
-            if (options.url) {
-                command.push(`-Dsonar.host.url=${options.url}`);
-            }
-            if (options.org) {
-                command.push(`-Dsonar.organization=${options.org}`);
-            }
-            if (options.token) {
-                command.push(`-Dsonar.login=${options.token}`);
-            }
-
-            const log = new StringCapturingProgressLog();
-            await spawnAndWatch(
-                asSpawnCommand(command.join(" ")),
-                {
-                    cwd: project.baseDir,
-                },
-                log,
-            );
-            await pli.addressChannels(`Code review success`);
-            logger.info(log.log);
-            const parsed = Pattern.exec(log.log);
-            await pli.addressChannels(`Analysis at ${parsed[ 0 ]}`);
-
-            return {
-                repoId: project.id,
-                comments: [],
-            };
-        },
+        name: "SonarQube review via Maven",
+        pushTest: IsMaven,
+        parametersInstance: options,
+        inspection: mvnScanner,
     };
 }
 
-// ANALYSIS SUCCESSFUL, you can browse https://sonarcloud.io/dashboard/index/com.atomist.springteam:spring-rest-seed
-const Pattern = /ANALYSIS SUCCESSFUL, you can browse ([^\s^[]*)/;
+export function sonarQubeReviewer(options: SonarQubeSupportOptions): ReviewerRegistration<SonarQubeSupportOptions> {
+    return {
+        name: "SonarQube review via Sonar Agent",
+        pushTest: not(IsMaven),
+        parametersInstance: options,
+        inspection: sonarAgentScanner,
+    };
+}

@@ -19,5 +19,5 @@ export {
     SonarQubeSupportOptions,
 } from "./lib/sonarQube";
 export {
-    sonarQubeReviewer,
+    mvnSonarQubeReviewer,
 } from "./lib/support/sonarQubeReviewer";

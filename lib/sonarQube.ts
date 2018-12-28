@@ -20,7 +20,7 @@ import {
     metadata,
     ReviewListenerRegistration,
 } from "@atomist/sdm";
-import { sonarQubeReviewer } from "./support/sonarQubeReviewer";
+import { mvnSonarQubeReviewer, sonarQubeReviewer } from "./support/sonarQubeReviewer";
 
 /**
  * Options determining what Spring functionality is activated.
@@ -50,6 +50,7 @@ export function sonarQubeSupport(options: SonarQubeSupportOptions): ExtensionPac
         configure: () => {
 
             if (!!options && options.enabled && !!options.inspectGoal) {
+                options.inspectGoal.with(mvnSonarQubeReviewer(options));
                 options.inspectGoal.with(sonarQubeReviewer(options));
 
                 if (options.reviewListeners) {
