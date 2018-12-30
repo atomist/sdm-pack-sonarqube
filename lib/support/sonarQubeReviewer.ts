@@ -21,11 +21,13 @@ import {
     spawnAndWatch,
 } from "@atomist/automation-client";
 import {
+    allSatisfied,
     not,
     ReviewerRegistration,
 } from "@atomist/sdm";
 import { IsMaven } from "@atomist/sdm-pack-spring";
 import { SonarQubeSupportOptions } from "../sonarQube";
+import { hasSonarPropertiesFile } from "../utils/hasSonarPropertiesFile";
 import { mvnScanner } from "./scanners/mvnScanner";
 import { sonarAgentScanner } from "./scanners/sonarAgentScanner";
 
@@ -41,7 +43,7 @@ export function mvnSonarQubeReviewer(options: SonarQubeSupportOptions): Reviewer
 export function sonarQubeReviewer(options: SonarQubeSupportOptions): ReviewerRegistration<SonarQubeSupportOptions> {
     return {
         name: "SonarQube review via Sonar Agent",
-        pushTest: not(IsMaven),
+        pushTest: allSatisfied(not(IsMaven), hasSonarPropertiesFile),
         parametersInstance: options,
         inspection: sonarAgentScanner,
     };

@@ -24,6 +24,7 @@ import {
     spawnLog,
     StringCapturingProgressLog,
 } from "@atomist/sdm";
+import { reviewSonarResult } from "../../review/reviewResult";
 import { SonarQubeSupportOptions } from "../../sonarQube";
 
 export const mvnScanner: CodeInspection<ProjectReview, SonarQubeSupportOptions> = async (project, pli) => {
@@ -51,15 +52,10 @@ export const mvnScanner: CodeInspection<ProjectReview, SonarQubeSupportOptions> 
             cwd: project.baseDir,
         },
     );
-    await pli.addressChannels(`Code review success`);
-    logger.info(log.log);
-
-    const Pattern = /ANALYSIS SUCCESSFUL, you can browse ([^\s^[]*)/;
-    const parsed = Pattern.exec(log.log);
-    await pli.addressChannels(`Analysis at ${parsed[ 0 ]}`);
+    const comments = await reviewSonarResult(log.log, pli);
 
     return {
         repoId: project.id,
-        comments: [],
+        comments,
     };
 };

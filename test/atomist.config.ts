@@ -27,6 +27,9 @@ import {
     configureSdm,
     createSoftwareDeliveryMachine,
 } from "@atomist/sdm-core";
+import {
+    NodeModulesProjectListener,
+} from "@atomist/sdm-pack-node";
 import { sonarQubeSupport } from "../lib/sonarQube";
 
 export function machineMaker(config: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
@@ -38,7 +41,8 @@ export function machineMaker(config: SoftwareDeliveryMachineConfiguration): Soft
         },
     );
 
-    const codeInspection = new AutoCodeInspection();
+    const codeInspection = new AutoCodeInspection()
+        .withProjectListener(NodeModulesProjectListener);
 
     sdm.addExtensionPacks(
         sonarQubeSupport({

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+import { Configuration, configurationValue } from "@atomist/automation-client";
 import {
     AutoCodeInspection,
     ExtensionPack,
     metadata,
     ReviewListenerRegistration,
 } from "@atomist/sdm";
+import { sonarReviewRegistration } from "./review/reviewListener";
 import {
     mvnSonarQubeReviewer,
     sonarQubeReviewer,
@@ -45,16 +47,21 @@ export interface SonarQubeSupportOptions {
      * Review listeners that let you publish review results.
      */
     reviewListeners?: ReviewListenerRegistration | ReviewListenerRegistration[];
+    configuration?: Configuration;
 }
 
 export function sonarQubeSupport(options: SonarQubeSupportOptions): ExtensionPack {
     return {
         ...metadata(),
-        configure: () => {
+        configure: sdm => {
 
             if (!!options && options.enabled && !!options.inspectGoal) {
+                options.configuration = sdm.configuration;
                 options.inspectGoal.with(mvnSonarQubeReviewer(options));
                 options.inspectGoal.with(sonarQubeReviewer(options));
+
+                // use default sonar listener (can disable in configuration)
+                options.inspectGoal.withListener(sonarReviewRegistration);
 
                 if (options.reviewListeners) {
                     const listeners = Array.isArray(options.reviewListeners) ?
