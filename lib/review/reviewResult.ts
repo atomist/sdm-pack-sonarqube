@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-import { configurationValue, HttpMethod, logger, ReviewComment, Severity } from "@atomist/automation-client";
+import {
+    configurationValue,
+    HttpMethod,
+    logger,
+    ReviewComment,
+    Severity,
+} from "@atomist/automation-client";
 import { Deferred } from "@atomist/automation-client/lib/internal/util/Deferred";
-import { PushAwareParametersInvocation, slackInfoMessage } from "@atomist/sdm";
+import {
+    PushAwareParametersInvocation,
+    slackInfoMessage,
+} from "@atomist/sdm";
 import { SonarQubeSupportOptions } from "../sonarQube";
 
 export const reviewSonarResult = async (

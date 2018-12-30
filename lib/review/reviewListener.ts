@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-import { configurationValue, logger } from "@atomist/automation-client";
 import {
-  PushImpactResponse,
-  ReviewListenerRegistration,
-  slackErrorMessage,
-  slackInfoMessage,
+    configurationValue,
+    logger,
+} from "@atomist/automation-client";
+import {
+    PushImpactResponse,
+    ReviewListenerRegistration,
+    slackErrorMessage,
+    slackInfoMessage,
 } from "@atomist/sdm";
 
 export const sonarReviewRegistration: ReviewListenerRegistration = {

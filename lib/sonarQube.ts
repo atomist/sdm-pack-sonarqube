@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { Configuration, configurationValue } from "@atomist/automation-client";
+import {
+    Configuration,
+    configurationValue,
+} from "@atomist/automation-client";
 import {
     AutoCodeInspection,
     ExtensionPack,
