@@ -28,7 +28,7 @@ export const sonarReviewRegistration: ReviewListenerRegistration = {
     name: "SonarDefaultRegistration",
     listener: async c => {
         // tslint:disable-next-line:no-null-keyword
-        if (configurationValue<boolean>("sdm.sonar.useDefaultListener", true) === false) {
+        if (!configurationValue<boolean>("sdm.sonar.useDefaultListener", true)) {
             return PushImpactResponse.proceed;
         }
 
