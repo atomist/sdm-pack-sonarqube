@@ -47,6 +47,16 @@ export interface SonarQubeSupportOptions {
     inspectGoal?: AutoCodeInspection;
 
     /**
+     * Extra command arguments to supply to sonar-scanner
+     */
+    sonarScannerArgs?: string[];
+
+    /**
+     * Extra command arguments to supply to Maven/sonar:sonar
+     */
+    mvnSonarArgs?: string[];
+
+    /**
      * Review listeners that let you publish review results.
      */
     reviewListeners?: ReviewListenerRegistration | ReviewListenerRegistration[];

@@ -28,7 +28,6 @@ import { reviewSonarResult } from "../../review/reviewResult";
 import { SonarQubeSupportOptions } from "../../sonarQube";
 
 export const sonarAgentScanner: CodeInspection<ProjectReview, SonarQubeSupportOptions> = async (p, pli) => {
-    logger.debug("Starting");
     if (!isLocalProject(p)) {
         throw new Error(`Can only perform review on local project: had ${p.id.url}`);
     }
@@ -48,7 +47,11 @@ export const sonarAgentScanner: CodeInspection<ProjectReview, SonarQubeSupportOp
     if (pli.parameters.token) {
         commandArgs.push(`-Dsonar.login=${pli.parameters.token}`);
     }
-    logger.debug("Through command args");
+
+    // Append sonar-scanner options, if supplied
+    if (pli.parameters.sonarScannerArgs) {
+        commandArgs.push(...pli.parameters.sonarScannerArgs);
+    }
 
     const log = new StringCapturingProgressLog();
     const sonarScannerCommand = pli.parameters.configuration.sdm.sonar.sonarScannerPath || "sonar-scanner";

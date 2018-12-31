@@ -27,7 +27,6 @@ import {
 export const sonarReviewRegistration: ReviewListenerRegistration = {
     name: "SonarDefaultRegistration",
     listener: async c => {
-        // tslint:disable-next-line:no-null-keyword
         if (!configurationValue<boolean>("sdm.sonar.useDefaultListener", true)) {
             return PushImpactResponse.proceed;
         }
@@ -90,19 +89,30 @@ export const sonarReviewRegistration: ReviewListenerRegistration = {
                     // tslint:disable-next-line:max-line-length
                     `<https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner|sonar-project.properties>`;
 
+                const subject = "SonarQube/SonarCloud Code Inspection Configuration Error!";
+                const message =
+                    `No project configuration could be found.  Pleaes ensure this project is either using maven` +
+                    ` (and therefore has a POM file), ` +
+                    `or please ensure a ` +
+                    `${docsUrl} ` +
+                    `file is present on the root of the project.`;
+
                 if (configurationValue<boolean>("sdm.sonar.failOnMissingViableConfig", true)) {
                     await c.addressChannels(slackErrorMessage(
-                        "SonarQube/SonarCloud Code Inspection Configuration Error!",
-                        `No project configuration could be found.  Pleaes ensure this project is either using maven` +
-                        ` (and therefore has a POM file), ` +
-                        `or please ensure a ` +
-                        `${docsUrl} ` +
-                        `file is present on the root of the project.` +
+                        subject,
+                        message +
                         `\n\nFailing goals.`,
                         c.context,
                     ));
                     return PushImpactResponse.failGoals;
                 } else {
+                    if (configurationValue<boolean>("sdm.sonar.warnOnMissingViableConfig", true)) {
+                        await c.addressChannels(slackInfoMessage(
+                            subject,
+                            message +
+                            `\n\nContinuing goals.`,
+                        ));
+                    }
                     return PushImpactResponse.proceed;
                 }
             }

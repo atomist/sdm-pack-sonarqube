@@ -31,7 +31,7 @@ export const mvnScanner: CodeInspection<ProjectReview, SonarQubeSupportOptions> 
     if (!isLocalProject(project)) {
         throw new Error(`Can only perform review on local project: had ${project.id.url}`);
     }
-    const commandArgs = ["clean", "org.jacoco:jacoco-maven-plugin:prepare-agent", "package", "sonar:sonar"];
+    const commandArgs = ["clean", "package", "sonar:sonar"];
 
     if (pli.parameters.url) {
         commandArgs.push(`-Dsonar.host.url=${pli.parameters.url}`);
@@ -41,6 +41,11 @@ export const mvnScanner: CodeInspection<ProjectReview, SonarQubeSupportOptions> 
     }
     if (pli.parameters.token) {
         commandArgs.push(`-Dsonar.login=${pli.parameters.token}`);
+    }
+
+    // Append sonar-scanner options, if supplied
+    if (pli.parameters.mvnSonarArgs) {
+        commandArgs.push(...pli.parameters.mvnSonarArgs);
     }
 
     const log = new StringCapturingProgressLog();

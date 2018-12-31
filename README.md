@@ -6,6 +6,7 @@
 Extension Pack for an Atomist SDM to integrate [SonarQube](https://www.sonarqube.org).
 
 ## Usage
+This SDM pack enables you to scan your projects using SonarQube/SonarCloud.  By default, the pack will fail your SDM goals if the scan does not pass your assigned quality gate (this behavior is configurable, see below).  There are two scanner types available.  The first, is the `sonar-scanner` utilty that can be used by any language.  However, this scanner does require that you supply some configuration to the scanner in the form of a `sonar-project.properties` file (more details [here](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner)).  Alternatively, if you are using Maven projects this pack will automatically use the Maven integrated Sonar plugin which does not require configuration in your project (the POM is used to extract the required details).
 
 ### Prereq
 If you are working on projects that do not use Maven, you must install the Sonar Scanner utility.  See instructions [here](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner)
@@ -51,11 +52,16 @@ sdm.addExtensionPacks(
 
 > All of the configuration options below should be added to the sonar section of your config
 
-* `useDefaultListener`: Should we use the default Sonar review listner?  By default this listener will display Quality gate results, the link to the analysis in the UI, as well as fail SDM goals if the quality gate did not pass. (Valid values, true/false.  Default behavior is true.)
-* `failOnMissingViableConfig`: Should we fail code inspection goal if there is no way to determine how to run a Sonar scan?  This would be the case where it's not a Maven project and is missing a sonar-project.properties file.  If enabled, this will fail the code inspection goal and raise an error message to your chat platform.  (Valid values, true/false.  Default behavior is true.)
-* `interval`: How quickly should we poll to see if a Sonar scan has completed?  Default is 10000ms (10 seconds).  Value must be supplied in ms.
-* `warnOnSkipped`: Should we publish a notice when some aspects of the quality gate are being ignored/skipped.  This is typically the case when the update size is smaller then the required size.  (Valid Values true/false, default behavior is true) 
-* `sonarScannerPath`: Path to the sonar-scanner utility within your SDM.  This is not required if the command is within your path. 
+* Global options
+  * `interval`: How quickly should we poll to see if a Sonar scan has completed?  Default is 10000ms (10 seconds).  Value must be supplied in ms.
+  * `warnOnSkipped`: Should we publish a notice when some aspects of the quality gate are being ignored/skipped.  This is typically the case when the update size is smaller then the required size.  (Valid Values true/false, default behavior is true) 
+  * `sonarScannerPath`: Path to the sonar-scanner utility within your SDM.  This is not required if the command is within your path. 
+  * `sonarScannerArgs`: Array of strings that should be passed to the Sonar scanner (sonar-scanner utility).  Optional.  This configuration item allows you to supply additional items, if required.
+  * `mvnSonarArgs`: Array of strings that should be passed to the Maven based Sonar scanner.  Optional.  This configuration item allows you to supply additional items, if required.
+* Default Review Listener Configuration
+  * `useDefaultListener`: Should we use the default Sonar review listener?  By default this listener will display Quality gate results, the link to the analysis in the UI, as well as fail SDM goals if the quality gate did not pass. (Valid values, true/false.  Default behavior is true.)
+  * `failOnMissingViableConfig`: Should we fail code inspection goal if there is no way to determine how to run a Sonar scan?  This would be the case where it's not a Maven project and is missing a sonar-project.properties file.  If enabled, this will fail the code inspection goal and raise an error message to your chat platform.  (Valid values, true/false.  Default behavior is true.)
+  * `warnOnMissingViableConfig`: Should we issue a warning if there is no way to determine how to run a Sonar scan?  This would be the case where it's not a Maven project and is missing a sonar-project.properties file.  If enabled, this will issue a warning in the Chat channel connected to this project, but your goals will not be failed.  Will only execute if `failOnMissingViableConfig` is set to false. (Valid values, true/false.  Default behavior is true.)
 
 
 ## Support
