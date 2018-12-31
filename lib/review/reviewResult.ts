@@ -69,7 +69,8 @@ export const reviewSonarResult = async (
     clearInterval(timer);
 
     // Retrieve analysis details (really the quality gate result)
-    const resultUrl = `${configurationValue<string>("sdm.sonar.url")}/api/qualitygates/project_status?analysisId=${analysisId}`;
+    const resultUrl =
+        `${configurationValue<string>("sdm.sonar.url")}/api/qualitygates/project_status?analysisId=${analysisId}`;
     const httpClient1 = pli.parameters.configuration.http.client.factory.create(resultUrl);
     const resultDetails = await httpClient1.exchange<SonarProjectAnalysisResult>(`${resultUrl}`, {
         method: HttpMethod.Get,
@@ -84,9 +85,9 @@ export const reviewSonarResult = async (
         resultDetails.body.projectStatus.ignoredConditions,
     );
 
-    if (pli.parameters.configuration.sdm.sonar.warnOnSkipped !== false) {
-        if (resultDetails.body.projectStatus.ignoredConditions === true) {
-            pli.addressChannels(slackInfoMessage(
+    if (configurationValue<boolean>("sdm.sonar.warnOnSkipped", true)) {
+        if (resultDetails.body.projectStatus.ignoredConditions) {
+            await pli.addressChannels(slackInfoMessage(
                 "SonarQube Scan Warning",
                 `Warning, some conditions are being ignored in the assigned quality gate!  ` +
                 `View anaylsis status <${analysisUrl}|here>`),

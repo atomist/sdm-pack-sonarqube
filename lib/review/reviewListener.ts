@@ -16,7 +16,6 @@
 
 import {
     configurationValue,
-    logger,
 } from "@atomist/automation-client";
 import {
     PushImpactResponse,
@@ -28,7 +27,8 @@ import {
 export const sonarReviewRegistration: ReviewListenerRegistration = {
     name: "SonarDefaultRegistration",
     listener: async c => {
-        if (JSON.parse(configurationValue<string>("sdm.sonar.useDefaultListener", null)) === false) {
+        // tslint:disable-next-line:no-null-keyword
+        if (configurationValue<boolean>("sdm.sonar.useDefaultListener", true) === false) {
             return PushImpactResponse.proceed;
         }
 
@@ -45,14 +45,15 @@ export const sonarReviewRegistration: ReviewListenerRegistration = {
                         metricComment = `Result for metric *${rc.category}* was ${commentDetail.status}`;
                     } else {
                         metricComment = `Result for metric *${rc.category}* was ${commentDetail.status}\n` +
-                            `\tActual value was ${commentDetail.actualValue} vs error threshold of ${commentDetail.errorThreshold}`;
+                            `\tActual value was ${commentDetail.actualValue} vs error threshold of ` +
+                            `${commentDetail.errorThreshold}`;
                     }
                     metricDetail.push(metricComment);
                 }
             });
 
             if (globalStatus[0].severity === "error") {
-                c.addressChannels(slackErrorMessage(
+                await c.addressChannels(slackErrorMessage(
                     "SonarQube/SonarCloud Quality Check Failed!",
                     `Find more details <${details.url}|here>\n\n` +
                     "*Metric Detail*\n" +
@@ -61,7 +62,7 @@ export const sonarReviewRegistration: ReviewListenerRegistration = {
                 ));
                 return PushImpactResponse.failGoals;
             } else {
-                c.addressChannels(slackInfoMessage(
+                await c.addressChannels(slackInfoMessage(
                     "SonarQube/SonarCloud Quality Check Passed!",
                     `Find more details <${details.url}|here>\n\n` +
                     "*Metric Detail*\n" +
@@ -70,25 +71,52 @@ export const sonarReviewRegistration: ReviewListenerRegistration = {
                 return PushImpactResponse.proceed;
             }
         } else {
-            // Pass or fail goals based on the configuration provided
-            // If we do not have a viable config (pom for mavne, or for all else
-            // a sonar-project.properties file), return proceed or fail
-            // default is to fail
-            if (JSON.parse(configurationValue<string>("sdm.sonar.failOnMissingViableConfig", null)) !== false) {
-                c.addressChannels(slackErrorMessage(
-                    "SonarQube/SonarCloud Code Inspection Configuration Error!",
-                    `No project configuration could be found.  Pleaes ensure this project is either using maven` +
-                    ` (and therefore has a POM file), ` +
-                    `or please ensure a ` +
-                    `<https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner|sonar-project.properties> ` +
-                    `file is present on the root of the project.` +
-                    `\n\nFailing goals.`,
+            // We could have got here for 2 reasons
+            //  Reason #1; our sonar configuration didn't actually find any comments
+            //  Reason #2; we're missing configuration required to actually run a scan
+            //
+            //  We'll give context sensitive errors for both
+
+            // Reason #2
+            if (
+                !(await c.project.hasFile("sonar-project.properties")) &&
+                !(await c.project.hasFile("pom.xml"))
+            ) {
+                // Pass or fail goals based on the configuration provided
+                // If we do not have a viable config (pom for mavne, or for all else
+                // a sonar-project.properties file), return proceed or fail
+                // default is to fail
+                const docsUrl =
+                    // tslint:disable-next-line:max-line-length
+                    `<https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner|sonar-project.properties>`;
+
+                if (configurationValue<boolean>("sdm.sonar.failOnMissingViableConfig", true)) {
+                    await c.addressChannels(slackErrorMessage(
+                        "SonarQube/SonarCloud Code Inspection Configuration Error!",
+                        `No project configuration could be found.  Pleaes ensure this project is either using maven` +
+                        ` (and therefore has a POM file), ` +
+                        `or please ensure a ` +
+                        `${docsUrl} ` +
+                        `file is present on the root of the project.` +
+                        `\n\nFailing goals.`,
+                        c.context,
+                    ));
+                    return PushImpactResponse.failGoals;
+                } else {
+                    return PushImpactResponse.proceed;
+                }
+            }
+
+            // Reason #1
+            if (c.review.comments.length === 0) {
+                await c.addressChannels(slackErrorMessage(
+                    "SonarQube/SonarCloud Code Inspection Error!",
+                    `No analysis details could be found.  Review failed.`,
                     c.context,
                 ));
                 return PushImpactResponse.failGoals;
-            } else {
-                return PushImpactResponse.proceed;
             }
+
         }
     },
 };

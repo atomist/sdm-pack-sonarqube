@@ -52,7 +52,7 @@ export const sonarAgentScanner: CodeInspection<ProjectReview, SonarQubeSupportOp
 
     const log = new StringCapturingProgressLog();
     const sonarScannerCommand = pli.parameters.configuration.sdm.sonar.sonarScannerPath || "sonar-scanner";
-    await spawnLog(
+    const spawnResult = await spawnLog(
         sonarScannerCommand,
         commandArgs,
         {
@@ -60,6 +60,13 @@ export const sonarAgentScanner: CodeInspection<ProjectReview, SonarQubeSupportOp
             cwd: p.baseDir,
         },
     );
+
+    if (spawnResult.code !== 0) {
+        throw new Error(
+            `Sonar Agent failed to run! Exit code ${spawnResult.code}\n\n` +
+            `*Error Log*:\n\n${log.log}`,
+        );
+    }
 
     const comments = await reviewSonarResult(log.log, pli);
     return {
