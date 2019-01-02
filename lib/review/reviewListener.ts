@@ -97,7 +97,6 @@ export const sonarReviewRegistration: ReviewListenerRegistration = {
                     `${docsUrl} ` +
                     `file is present on the root of the project.`;
 
-
                 if (configurationValue<boolean>("sdm.sonar.failOnMissingViableConfig", true)) {
                     await c.addressChannels(slackErrorMessage(
                         subject,
