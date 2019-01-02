@@ -53,7 +53,7 @@ export const sonarReviewRegistration: ReviewListenerRegistration = {
 
             if (globalStatus[0].severity === "error") {
                 await c.addressChannels(slackErrorMessage(
-                    "SonarQube/SonarCloud Quality Check Failed!",
+                    "SonarQube/SonarCloud Quality Gate Failed!",
                     `Find more details <${details.url}|here>\n\n` +
                     "*Metric Detail*\n" +
                     metricDetail.join("\n"),
@@ -62,7 +62,7 @@ export const sonarReviewRegistration: ReviewListenerRegistration = {
                 return PushImpactResponse.failGoals;
             } else {
                 await c.addressChannels(slackInfoMessage(
-                    "SonarQube/SonarCloud Quality Check Passed!",
+                    "SonarQube/SonarCloud Quality Gate Passed!",
                     `Find more details <${details.url}|here>\n\n` +
                     "*Metric Detail*\n" +
                     metricDetail.join("\n"),
