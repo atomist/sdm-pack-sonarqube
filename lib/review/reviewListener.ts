@@ -15,7 +15,7 @@
  */
 
 import {
-    configurationValue,
+    configurationValue, logger,
 } from "@atomist/automation-client";
 import {
     PushImpactResponse,
@@ -97,6 +97,7 @@ export const sonarReviewRegistration: ReviewListenerRegistration = {
                     `${docsUrl} ` +
                     `file is present on the root of the project.`;
 
+
                 if (configurationValue<boolean>("sdm.sonar.failOnMissingViableConfig", true)) {
                     await c.addressChannels(slackErrorMessage(
                         subject,
@@ -104,6 +105,7 @@ export const sonarReviewRegistration: ReviewListenerRegistration = {
                         `\n\nFailing goals.`,
                         c.context,
                     ));
+                    logger.error(message + "  Failing Goals (failOnMissingViableConfig is set to 'true').");
                     return PushImpactResponse.failGoals;
                 } else {
                     if (configurationValue<boolean>("sdm.sonar.warnOnMissingViableConfig", true)) {
@@ -112,6 +114,7 @@ export const sonarReviewRegistration: ReviewListenerRegistration = {
                             message +
                             `\n\nContinuing goals.`,
                         ));
+                        logger.error(message + "  Continuing goals(warnOnMissingViableConfig is set to 'true').");
                     }
                     return PushImpactResponse.proceed;
                 }
@@ -119,11 +122,13 @@ export const sonarReviewRegistration: ReviewListenerRegistration = {
 
             // Reason #1
             if (c.review.comments.length === 0) {
+                const msg = "No analysis details could be found.  Review failed.";
                 await c.addressChannels(slackErrorMessage(
                     "SonarQube/SonarCloud Code Inspection Error!",
-                    `No analysis details could be found.  Review failed.`,
+                    msg,
                     c.context,
                 ));
+                logger.error(msg);
                 return PushImpactResponse.failGoals;
             }
 
