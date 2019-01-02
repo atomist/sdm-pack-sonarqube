@@ -48,7 +48,9 @@ export const sonarAgentScanner: CodeInspection<ProjectReview, SonarQubeSupportOp
     }
 
     // Set the branch name
-    commandArgs.push(`-Dsonar.branch.name=${pli.push.project.branch}`);
+    if (pli.push.project.branch !== "master") {
+        commandArgs.push(`-Dsonar.branch.name=${pli.push.project.branch}`);
+    }
 
     // Append sonar-scanner options, if supplied
     if (pli.parameters.sonarScannerArgs) {

@@ -49,7 +49,9 @@ export const mvnScanner: CodeInspection<ProjectReview, SonarQubeSupportOptions> 
     }
 
     // Set the branch name
-    commandArgs.push(`-Dsonar.branch.name=${pli.push.project.branch}`);
+    if (pli.push.project.branch !== "master") {
+        commandArgs.push(`-Dsonar.branch.name=${pli.push.project.branch}`);
+    }
 
     const log = new StringCapturingProgressLog();
     await spawnLog(
