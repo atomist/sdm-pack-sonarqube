@@ -16,7 +16,6 @@
 
 import {
     isLocalProject,
-    logger,
     ProjectReview,
 } from "@atomist/automation-client";
 import {
@@ -47,6 +46,9 @@ export const sonarAgentScanner: CodeInspection<ProjectReview, SonarQubeSupportOp
     if (pli.parameters.token) {
         commandArgs.push(`-Dsonar.login=${pli.parameters.token}`);
     }
+
+    // Set the branch name
+    commandArgs.push(`-Dsonar.branch.name=${pli.push.project.branch}`);
 
     // Append sonar-scanner options, if supplied
     if (pli.parameters.sonarScannerArgs) {
