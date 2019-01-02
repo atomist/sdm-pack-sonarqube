@@ -15,7 +15,8 @@
  */
 
 import {
-    configurationValue, logger,
+    configurationValue,
+    logger,
 } from "@atomist/automation-client";
 import {
     PushImpactResponse,
