@@ -35,7 +35,7 @@ export const reviewSonarResult = async (
     const Pattern = /More about the report processing at ([^\s^[]*)/;
     const parsed = Pattern.exec(task);
     const statusUrl = parsed[1];
-    const httpClient = pli.parameters.configuration.http.client.factory.create(statusUrl);
+    const httpClient = pli.parameters.configuration.http.client.factory.create();
 
     // Retrieve the analysis URL
     const analysisPattern = /ANALYSIS SUCCESSFUL, you can browse ([^\s^[]*)/;
@@ -47,36 +47,49 @@ export const reviewSonarResult = async (
     const pollInternal = pli.parameters.configuration.sdm.sonar.interval || 10000;
     const timer = setInterval(async () => {
         logger.debug(`Polling Sonar for analysis status`);
-        const taskStatus = await httpClient.exchange<SonarTaskResult>(`${statusUrl}`, {
+        await httpClient.exchange<SonarTaskResult>(`${statusUrl}`, {
             method: HttpMethod.Get,
+            retry: {
+                retries: 3,
+            },
             headers: {
                 Accept: "application/json",
+                Authorization: `Bearer ${configurationValue<string>("sdm.sonar.token")}`,
             },
-        });
-        logger.debug(`Sonar Task Status: ${taskStatus.body.task.status}`);
+        }).then(taskStatus => {
+            logger.debug(`Sonar Task Status: ${taskStatus.body.task.status}`);
 
-        // We are only rejecting if the actual scan on the SonarQube server failed - which would be
-        // an abnormal condition.  This is NOT failing from a error state/etc
-        if (taskStatus.body.task.status === "SUCCESS") {
-            taskResult.resolve(taskStatus.body.task.analysisId);
-        } else if (taskStatus.body.task.status !== "IN_PROGRESS") {
-            taskResult.reject(taskStatus.body.task.status);
-        }
+            // We are only rejecting if the actual scan on the SonarQube server failed - which would be
+            // an abnormal condition.  This is NOT failing from a error state/etc
+            if (taskStatus.body.task.status === "SUCCESS") {
+                taskResult.resolve(taskStatus.body.task.analysisId);
+            } else if (taskStatus.body.task.status !== "IN_PROGRESS") {
+                taskResult.reject(taskStatus.body.task.status);
+            }
+        }).catch( e => {
+            logger.error(`Failed to gather status, error recieved: [${e}]`);
+            clearInterval(timer);
+            taskResult.reject(e);
+        });
     }, pollInternal);
 
-    // Wait for Sonar polling to finish
     const analysisId = await taskResult.promise;
     clearInterval(timer);
 
     // Retrieve analysis details (really the quality gate result)
     const resultUrl =
         `${configurationValue<string>("sdm.sonar.url")}/api/qualitygates/project_status?analysisId=${analysisId}`;
-    const httpClient1 = pli.parameters.configuration.http.client.factory.create(resultUrl);
-    const resultDetails = await httpClient1.exchange<SonarProjectAnalysisResult>(`${resultUrl}`, {
+
+    const resultDetails = await httpClient.exchange<SonarProjectAnalysisResult>(`${resultUrl}`, {
         method: HttpMethod.Get,
         headers: {
             Accept: "application/json",
+            Authorization: `Bearer ${configurationValue<string>("sdm.sonar.token")}`,
         },
+    }).catch( e => {
+        const msg = `Failed to retrieve Sonar Analysis details, error [${e}]`;
+        logger.error(msg);
+        throw new Error(msg);
     });
 
     logger.debug(
