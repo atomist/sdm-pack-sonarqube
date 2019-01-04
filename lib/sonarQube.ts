@@ -15,13 +15,15 @@
  */
 
 import {
-    Configuration,
-    configurationValue,
+    GraphQL,
 } from "@atomist/automation-client";
 import {
     ExtensionPack,
     metadata,
+    Goal,
 } from "@atomist/sdm";
+import { onRequestedSonarScan } from "./events/onRequestedSonarScan";
+import { onSonarScanCompleted } from "./events/onSonarScanCompleted";
 
 /**
  * Options for SonarQube Scanning
@@ -72,7 +74,7 @@ export interface SonarQubeSupportOptions {
     warnOnFailedQualityGate: boolean;
 }
 
-export function sonarQubeSupport(): ExtensionPack {
+export function sonarQubeSupport(goal: Goal): ExtensionPack {
     return {
         ...metadata(),
         requiredConfigurationValues: [
@@ -81,6 +83,12 @@ export function sonarQubeSupport(): ExtensionPack {
             "sdm.sonar.token",
         ],
         configure: sdm => {
+            sdm.addEvent(onRequestedSonarScan(goal));
+            sdm.addEvent(onSonarScanCompleted(goal));
+            sdm.addIngester(GraphQL.ingester({
+                name: "sonarScan",
+            }));
+
             return sdm;
         },
     };

@@ -23,19 +23,16 @@ $ npm install @atomist/sdm-pack-sonarqube
 ```ts
 import { SonarQubeSupport } from "@atomist/sdm-pack-sonarqube";
 // [...]
-const codeInspection = new AutoCodeInspection();
+const SonarScanGoal = new SonarScan();
 sdm.addExtensionPacks(
-    sonarQubeSupport({
-        ...sdm.configuration.sdm.sonar,
-        inspectGoal: codeInspection,
-    }),
+    sonarQubeSupport(SonarScanGoal),
+);
+//[...]
+sdm.withPushRules(
+    onAnyPush()
+        .setGoals(SonarScanGoal),
 );
 ```
-
-> Note: Depending on the language you are using you may need to include additional listeners on your inspection goals.  For example, to run the Sonar scanner against a NodeJS project you must first execute a `npm install`.  To accomplish this you can add the NPM listner from `sdm-pack-node`.  
-> ```ts
-> const codeInspection = new AutoCodeInspection()
->        .withProjectListener(NodeModulesProjectListener);
 
 3. Add configuration to your client configuration
 

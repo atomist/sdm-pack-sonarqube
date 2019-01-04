@@ -29,7 +29,7 @@ import {
 import {
     NodeModulesProjectListener,
 } from "@atomist/sdm-pack-node";
-import { SonarScan } from "../lib/goals/sonarScan";
+import { SonarScan } from "../.";
 import { onRequestedSonarScan } from "../lib/events/onRequestedSonarScan";
 import { onSonarScanCompleted } from "../lib/events/onSonarScanCompleted";
 import { sonarQubeSupport } from "../lib/sonarQube";
@@ -45,22 +45,13 @@ export function machineMaker(config: SoftwareDeliveryMachineConfiguration): Soft
     );
 
     const SonarScanGoal = new SonarScan();
-
     sdm.withPushRules(
         onAnyPush()
             .setGoals(SonarScanGoal),
     );
 
-    sdm.addEvent(onRequestedSonarScan(SonarScanGoal));
-    sdm.addEvent(onSonarScanCompleted(SonarScanGoal));
-
-    sdm.addIngester(GraphQL.ingester({
-        name: "sonarScan",
-        path: "../lib/graphql/ingester/sonarScan.graphql",
-    }));
-
     sdm.addExtensionPacks(
-        sonarQubeSupport(),
+        sonarQubeSupport(SonarScanGoal),
     );
     return sdm;
 }

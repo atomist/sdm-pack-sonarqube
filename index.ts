@@ -18,3 +18,6 @@ export {
     sonarQubeSupport,
     SonarQubeSupportOptions,
 } from "./lib/sonarQube";
+export {
+    SonarScan,
+} from "./lib/goals/sonarScan";
