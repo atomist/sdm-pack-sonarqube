@@ -1,0 +1,10 @@
+query GetGoalBySonarTaskData($taskId: String!){
+  SdmGoal(data:[$taskId]){
+    data
+    repo {
+      name
+      owner
+      providerId
+    }
+  }
+}

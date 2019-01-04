@@ -17,6 +17,7 @@
 import {
     isLocalProject,
     ProjectReview,
+    GitProject,
 } from "@atomist/automation-client";
 import {
     CodeInspection,
@@ -25,10 +26,11 @@ import {
 } from "@atomist/sdm";
 import { reviewSonarResult } from "../../review/reviewResult";
 import { SonarQubeSupportOptions } from "../../sonarQube";
+import { sonarScannerExecuter } from "./scanner";
 
-export const sonarAgentScanner: CodeInspection<ProjectReview, SonarQubeSupportOptions> = async (p, pli) => {
+export const sonarAgentScanner: sonarScannerExecuter = async (p: GitProject, sonarOptions: SonarQubeSupportOptions) => {
     if (!isLocalProject(p)) {
-        throw new Error(`Can only perform review on local project: had ${p.id.url}`);
+        throw new Error(`Can only perform review on local project`);
     }
 
     if (!p.hasFile("sonar-project.properties")) {
@@ -36,29 +38,24 @@ export const sonarAgentScanner: CodeInspection<ProjectReview, SonarQubeSupportOp
     }
 
     const commandArgs: string[] = [];
-
-    if (pli.parameters.url) {
-        commandArgs.push(`-Dsonar.host.url=${pli.parameters.url}`);
-    }
-    if (pli.parameters.org) {
-        commandArgs.push(`-Dsonar.organization=${pli.parameters.org}`);
-    }
-    if (pli.parameters.token) {
-        commandArgs.push(`-Dsonar.login=${pli.parameters.token}`);
-    }
+    commandArgs.push(`-Dsonar.host.url=${sonarOptions.url}`);
+    commandArgs.push(`-Dsonar.organization=${sonarOptions.org}`);
+    commandArgs.push(`-Dsonar.login=${sonarOptions.token}`);
+    commandArgs.push(`-Dsonar.analysis.scmRevision=${p.id.sha}`);
+    commandArgs.push(`-Dsonar.analysis.scmBranch=${p.id.branch}`);
 
     // Set the branch name
-    if (pli.push.project.branch !== "master") {
-        commandArgs.push(`-Dsonar.branch.name=${pli.push.project.branch}`);
+    if (p.id.branch !== "master") {
+        commandArgs.push(`-Dsonar.branch.name=${p.id.branch}`);
     }
 
     // Append sonar-scanner options, if supplied
-    if (pli.parameters.sonarScannerArgs) {
-        commandArgs.push(...pli.parameters.sonarScannerArgs);
+    if (sonarOptions.sonarScannerArgs) {
+        commandArgs.push(...sonarOptions.sonarScannerArgs);
     }
 
     const log = new StringCapturingProgressLog();
-    const sonarScannerCommand = pli.parameters.configuration.sdm.sonar.sonarScannerPath || "sonar-scanner";
+    const sonarScannerCommand = sonarOptions.sonarScannerPath || "sonar-scanner";
     const spawnResult = await spawnLog(
         sonarScannerCommand,
         commandArgs,
@@ -75,9 +72,5 @@ export const sonarAgentScanner: CodeInspection<ProjectReview, SonarQubeSupportOp
         );
     }
 
-    const comments = await reviewSonarResult(log.log, pli);
-    return {
-        repoId: p.id,
-        comments,
-    };
+    return log.log;
 };

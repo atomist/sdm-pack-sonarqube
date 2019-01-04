@@ -18,6 +18,3 @@ export {
     sonarQubeSupport,
     SonarQubeSupportOptions,
 } from "./lib/sonarQube";
-export {
-    mvnSonarQubeReviewer,
-} from "./lib/support/sonarQubeReviewer";

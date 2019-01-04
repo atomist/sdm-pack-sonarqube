@@ -19,32 +19,28 @@ import {
     configurationValue,
 } from "@atomist/automation-client";
 import {
-    AutoCodeInspection,
     ExtensionPack,
     metadata,
-    ReviewListenerRegistration,
 } from "@atomist/sdm";
-import { sonarReviewRegistration } from "./review/reviewListener";
-import {
-    mvnSonarQubeReviewer,
-    sonarQubeReviewer,
-} from "./support/sonarQubeReviewer";
 
 /**
- * Options determining what Spring functionality is activated.
+ * Options for SonarQube Scanning
  */
 export interface SonarQubeSupportOptions {
-
-    enabled: boolean;
+    /**
+     * The base URL to your SonarQube instance
+     */
     url: string;
-    org: string;
-    token: string;
 
     /**
-     * Inspect goal to add inspections to.
-     * Review functionality won't work otherwise.
+     * The Organization within SonarQube your projects live in
      */
-    inspectGoal?: AutoCodeInspection;
+    org: string;
+
+    /**
+     * The API Token for the user (service account) we'll use when running scans
+     */
+    token: string;
 
     /**
      * Extra command arguments to supply to sonar-scanner
@@ -57,31 +53,35 @@ export interface SonarQubeSupportOptions {
     mvnSonarArgs?: string[];
 
     /**
-     * Review listeners that let you publish review results.
+     * Path to the sonar scanner utility.  By default this pack relies on the utility to be in the SDMs path
      */
-    reviewListeners?: ReviewListenerRegistration | ReviewListenerRegistration[];
-    configuration?: Configuration;
+    sonarScannerPath?: string;
+
+    /**
+     * Should we issue a warning (instead of fail by default) if there is no way to determine how to run a Sonar scan?
+     * This would be the case where it's not a Maven project and is missing a sonar-project.properties file.  If
+     * enabled, this will issue a warning in the Chat channel connected to this project, but your goals will not be
+     * failed. (Valid values, true/false.  Default behavior is false.)
+     */
+    warnOnMissingViableConfig: boolean;
+
+    /**
+     * Should we issue a warning (instead of fail by default) if a quality gate fails?
+     * (Valid values, true/false.  Default behavior is false.)
+     */
+    warnOnFailedQualityGate: boolean;
 }
 
-export function sonarQubeSupport(options: SonarQubeSupportOptions): ExtensionPack {
+export function sonarQubeSupport(): ExtensionPack {
     return {
         ...metadata(),
+        requiredConfigurationValues: [
+            "sdm.sonar.url",
+            "sdm.sonar.org",
+            "sdm.sonar.token",
+        ],
         configure: sdm => {
-
-            if (!!options && options.enabled && !!options.inspectGoal) {
-                options.configuration = sdm.configuration;
-                options.inspectGoal.with(mvnSonarQubeReviewer(options));
-                options.inspectGoal.with(sonarQubeReviewer(options));
-
-                // use default sonar listener (can disable in configuration)
-                options.inspectGoal.withListener(sonarReviewRegistration);
-
-                if (options.reviewListeners) {
-                    const listeners = Array.isArray(options.reviewListeners) ?
-                        options.reviewListeners : [options.reviewListeners];
-                    listeners.forEach(l => options.inspectGoal.withListener(l));
-                }
-            }
+            return sdm;
         },
     };
 }

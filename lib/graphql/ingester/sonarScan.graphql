@@ -1,0 +1,38 @@
+type SonarScan @rootType {
+    analysedAt: String!
+    project: SonarProject!
+    properties: SonarProjectProperties!
+    qualityGate: SonarQualityGate!
+    serverUrl: String!
+    status: String!
+    taskId: String!
+    push: Push
+        @linkTo(
+            queryName: "pushBySha",
+            variables: [
+                {name: "afterSha", path: "$.properties.sonar_analysis_scmRevision"},
+                {name: "branchName", path: "$.properties.sonar_analysis_scmBranch"}
+            ]
+        )
+}
+type SonarProjectProperties {
+    sonar_analysis_scmRevision: String
+    sonar_analysis_scmBranch: String
+}
+type SonarProject {
+    key: String
+    name: String
+}
+type SonarQualityGate {
+    conditions: [SonarQualityGateCondition]
+    name: String
+    status: String
+}
+type SonarQualityGateCondition {
+    errorThreshold: String
+    metric: String
+    onLeakPeriod: Boolean
+    operator: String
+    status: String
+    value: String
+}

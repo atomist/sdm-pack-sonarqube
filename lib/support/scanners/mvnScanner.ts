@@ -16,45 +16,44 @@
 
 import {
     isLocalProject,
+    GitProject,
     logger,
-    ProjectReview,
 } from "@atomist/automation-client";
 import {
-    CodeInspection,
     spawnLog,
     StringCapturingProgressLog,
 } from "@atomist/sdm";
-import { reviewSonarResult } from "../../review/reviewResult";
 import { SonarQubeSupportOptions } from "../../sonarQube";
+import { sonarScannerExecuter } from "./scanner";
 
-export const mvnScanner: CodeInspection<ProjectReview, SonarQubeSupportOptions> = async (project, pli) => {
+export const mvnScanner: sonarScannerExecuter = async (project: GitProject, sonarOptions: SonarQubeSupportOptions) => {
     if (!isLocalProject(project)) {
-        throw new Error(`Can only perform review on local project: had ${project.id.url}`);
+        throw new Error(`Can only perform review on local project!`);
     }
     const commandArgs = ["clean", "package", "sonar:sonar"];
 
-    if (pli.parameters.url) {
-        commandArgs.push(`-Dsonar.host.url=${pli.parameters.url}`);
-    }
-    if (pli.parameters.org) {
-        commandArgs.push(`-Dsonar.organization=${pli.parameters.org}`);
-    }
-    if (pli.parameters.token) {
-        commandArgs.push(`-Dsonar.login=${pli.parameters.token}`);
-    }
+    /**
+     *  Add arguments, note that these are definitely present as they are set to required
+     * options in the SDM pack
+     */
+    commandArgs.push(`-Dsonar.host.url=${sonarOptions.url}`);
+    commandArgs.push(`-Dsonar.organization=${sonarOptions.org}`);
+    commandArgs.push(`-Dsonar.login=${sonarOptions.token}`);
+    commandArgs.push(`-Dsonar.analysis.scmRevision=${project.id.sha}`);
+    commandArgs.push(`-Dsonar.analysis.scmBranch=${project.id.branch}`);
 
     // Append sonar-scanner options, if supplied
-    if (pli.parameters.mvnSonarArgs) {
-        commandArgs.push(...pli.parameters.mvnSonarArgs);
+    if (sonarOptions.mvnSonarArgs) {
+        commandArgs.push(...sonarOptions.mvnSonarArgs);
     }
 
     // Set the branch name
-    if (pli.push.project.branch !== "master") {
-        commandArgs.push(`-Dsonar.branch.name=${pli.push.project.branch}`);
+    if (project.id.branch !== "master") {
+        commandArgs.push(`-Dsonar.branch.name=${project.id.branch}`);
     }
 
     const log = new StringCapturingProgressLog();
-    await spawnLog(
+    const result = await spawnLog(
         "mvn",
         commandArgs,
         {
@@ -62,10 +61,11 @@ export const mvnScanner: CodeInspection<ProjectReview, SonarQubeSupportOptions> 
             cwd: project.baseDir,
         },
     );
-    const comments = await reviewSonarResult(log.log, pli);
 
-    return {
-        repoId: project.id,
-        comments,
-    };
+    if (result.code !== 0) {
+        logger.error(`Error running Maven Sonar Scan (exit code ${result.code}).  Error [${result.stdout}]`);
+        throw new Error(`Error running Maven Sonar Scan, exit code ${result.code}!`);
+    }
+
+    return log.log;
 };

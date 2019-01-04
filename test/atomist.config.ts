@@ -15,10 +15,9 @@
  */
 
 import {
-    Configuration,
+    Configuration, GraphQL,
 } from "@atomist/automation-client";
 import {
-    AutoCodeInspection,
     onAnyPush,
     SoftwareDeliveryMachine,
     SoftwareDeliveryMachineConfiguration,
@@ -30,7 +29,11 @@ import {
 import {
     NodeModulesProjectListener,
 } from "@atomist/sdm-pack-node";
+import { SonarScan } from "../lib/goals/sonarScan";
+import { onRequestedSonarScan } from "../lib/events/onRequestedSonarScan";
+import { onSonarScanCompleted } from "../lib/events/onSonarScanCompleted";
 import { sonarQubeSupport } from "../lib/sonarQube";
+// import { sonarQubeSupport } from "../lib/sonarQube";
 
 export function machineMaker(config: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
 
@@ -41,21 +44,24 @@ export function machineMaker(config: SoftwareDeliveryMachineConfiguration): Soft
         },
     );
 
-    const codeInspection = new AutoCodeInspection()
-        .withProjectListener(NodeModulesProjectListener);
-
-    sdm.addExtensionPacks(
-        sonarQubeSupport({
-            ...sdm.configuration.sdm.sonar,
-            inspectGoal: codeInspection,
-        }),
-    );
+    const SonarScanGoal = new SonarScan();
 
     sdm.withPushRules(
         onAnyPush()
-            .setGoals(codeInspection),
+            .setGoals(SonarScanGoal),
     );
 
+    sdm.addEvent(onRequestedSonarScan(SonarScanGoal));
+    sdm.addEvent(onSonarScanCompleted(SonarScanGoal));
+
+    sdm.addIngester(GraphQL.ingester({
+        name: "sonarScan",
+        path: "../lib/graphql/ingester/sonarScan.graphql",
+    }));
+
+    sdm.addExtensionPacks(
+        sonarQubeSupport(),
+    );
     return sdm;
 }
 
