@@ -15,7 +15,8 @@
  */
 
 import {
-    Configuration, GraphQL,
+    Configuration,
+    GraphQL,
 } from "@atomist/automation-client";
 import {
     onAnyPush,

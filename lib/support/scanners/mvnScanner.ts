@@ -15,8 +15,8 @@
  */
 
 import {
-    isLocalProject,
     GitProject,
+    isLocalProject,
     logger,
 } from "@atomist/automation-client";
 import {

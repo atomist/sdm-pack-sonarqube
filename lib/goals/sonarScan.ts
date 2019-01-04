@@ -15,11 +15,11 @@
  */
 
 import {
-  FulfillableGoalDetails,
-  Goal,
-  getGoalDefinitionFrom,
-  DefaultGoalNameGenerator,
-  FulfillableGoal,
+    DefaultGoalNameGenerator,
+    FulfillableGoal,
+    FulfillableGoalDetails,
+    getGoalDefinitionFrom,
+    Goal,
 } from "@atomist/sdm";
 
 export class SonarScan extends FulfillableGoal {

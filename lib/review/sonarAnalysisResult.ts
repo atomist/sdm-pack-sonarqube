@@ -16,9 +16,9 @@
 
 import {
     configurationValue,
+    HandlerContext,
     logger,
     ReviewComment,
-    HandlerContext,
 } from "@atomist/automation-client";
 import {
     PushImpactResponse,

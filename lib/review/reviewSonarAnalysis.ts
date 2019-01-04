@@ -15,10 +15,10 @@
  */
 
 import {
+    configurationValue,
     logger,
     ReviewComment,
     Severity,
-    configurationValue,
 } from "@atomist/automation-client";
 import {
     SonarScanCompleted,

@@ -18,25 +18,28 @@ import {
     SonarScanRequestedGoal,
 } from "../typings/types";
 import {
-  OnEvent,
-  Success,
-  GitHubRepoRef,
-  GraphQL,
-  GitCommandGitProject,
-  configurationValue,
+    configurationValue,
+    GitCommandGitProject,
+    GitHubRepoRef,
+    GraphQL,
+    OnEvent,
+    Success,
 } from "@atomist/automation-client";
 import {
-  EventHandlerRegistration,
-  findSdmGoalOnCommit,
-  Goal,
-  updateGoal,
-  SdmGoalState,
+    EventHandlerRegistration,
+    findSdmGoalOnCommit,
+    Goal,
+    SdmGoalState,
+    updateGoal,
 } from "@atomist/sdm";
 import { SonarQubeSupportOptions } from "../sonarQube";
 import _ = require("lodash");
 import { mvnScanner } from "../support/scanners/mvnScanner";
 import { sonarAgentScanner } from "../support/scanners/sonarAgentScanner";
-import { handleScannerError, handleScannerWarn } from "../support/scanners/scanner";
+import {
+    handleScannerError,
+    handleScannerWarn,
+} from "../support/scanners/scanner";
 
 export function onRequestedSonarScanHandler(goal: Goal):
     OnEvent<SonarScanRequestedGoal.Subscription> {

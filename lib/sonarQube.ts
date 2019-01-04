@@ -19,8 +19,8 @@ import {
 } from "@atomist/automation-client";
 import {
     ExtensionPack,
-    metadata,
     Goal,
+    metadata,
 } from "@atomist/sdm";
 import { onRequestedSonarScan } from "./events/onRequestedSonarScan";
 import { onSonarScanCompleted } from "./events/onSonarScanCompleted";

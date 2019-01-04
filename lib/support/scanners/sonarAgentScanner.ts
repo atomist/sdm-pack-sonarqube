@@ -15,9 +15,9 @@
  */
 
 import {
+    GitProject,
     isLocalProject,
     ProjectReview,
-    GitProject,
 } from "@atomist/automation-client";
 import {
     CodeInspection,

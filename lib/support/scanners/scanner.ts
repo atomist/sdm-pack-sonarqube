@@ -14,9 +14,20 @@
  * limitations under the License.
  */
 
-import { GitProject, HandlerContext, logger } from "@atomist/automation-client";
+import {
+    GitProject,
+    HandlerContext,
+    logger,
+} from "@atomist/automation-client";
 import { SonarQubeSupportOptions } from "../../..";
-import { SdmGoalEvent, Goal, updateGoal, SdmGoalState, slackErrorMessage, slackInfoMessage } from "@atomist/sdm";
+import {
+    Goal,
+    SdmGoalEvent,
+    SdmGoalState,
+    slackErrorMessage,
+    slackInfoMessage,
+    updateGoal,
+} from "@atomist/sdm";
 
 export type sonarScannerExecuter = (p: GitProject, sonarOptions: SonarQubeSupportOptions)
     => Promise<string>;

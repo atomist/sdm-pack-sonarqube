@@ -15,15 +15,25 @@
  */
 
 import {
-  Goal,
-  findSdmGoalOnCommit,
-  updateGoal,
-  SdmGoalState,
-  EventHandlerRegistration,
-  PushImpactResponse,
+    EventHandlerRegistration,
+    findSdmGoalOnCommit,
+    Goal,
+    PushImpactResponse,
+    SdmGoalState,
+    updateGoal,
 } from "@atomist/sdm";
-import { OnEvent, Success, GitHubRepoRef, GraphQL, configurationValue, logger } from "@atomist/automation-client";
-import { GetGoalBySonarTaskData, SonarScanCompleted } from "../typings/types";
+import {
+    configurationValue,
+    GitHubRepoRef,
+    GraphQL,
+    logger,
+    OnEvent,
+    Success,
+} from "@atomist/automation-client";
+import {
+    GetGoalBySonarTaskData,
+    SonarScanCompleted,
+} from "../typings/types";
 import { reviewSonarAnalysisResult } from "../review/reviewSonarAnalysis";
 import { determineSonarAnalysisResult } from "../review/sonarAnalysisResult";
 import { SonarQubeSupportOptions } from "../..";
