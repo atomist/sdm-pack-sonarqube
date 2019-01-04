@@ -80,7 +80,7 @@ export function onRequestedSonarScanHandler(goal: Goal):
             const channelDetail = sdmGoalData.push.repo.channels.map(c => c.name);
 
             let log: string;
-            if (await p.hasFile("pom.xml") === true) {
+            if (await p.hasFile("pom.xml")) {
                 log = await mvnScanner(p, sonarQubeOptions)
                     .catch(async error => {
                         const errorString = `Failed to execute Sonar Scan (maven). ${error}`;
