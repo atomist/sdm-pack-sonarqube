@@ -27,7 +27,6 @@
     "no-unnecessary-type-assertion": true,
     "object-literal-sort-keys": false,
     "prefer-readonly": true,
-    "ordered-imports": false,
     "typedef": [
       true,
       "call-signature",

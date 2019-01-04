@@ -19,7 +19,6 @@ import {
     HandlerContext,
     logger,
 } from "@atomist/automation-client";
-import { SonarQubeSupportOptions } from "../../..";
 import {
     Goal,
     SdmGoalEvent,
@@ -28,6 +27,7 @@ import {
     slackInfoMessage,
     updateGoal,
 } from "@atomist/sdm";
+import { SonarQubeSupportOptions } from "../../..";
 
 export type sonarScannerExecuter = (p: GitProject, sonarOptions: SonarQubeSupportOptions)
     => Promise<string>;

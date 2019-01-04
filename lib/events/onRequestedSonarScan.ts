@@ -15,9 +15,6 @@
  */
 
 import {
-    SonarScanRequestedGoal,
-} from "../typings/types";
-import {
     configurationValue,
     GitCommandGitProject,
     GitHubRepoRef,
@@ -33,13 +30,15 @@ import {
     updateGoal,
 } from "@atomist/sdm";
 import { SonarQubeSupportOptions } from "../sonarQube";
-import _ = require("lodash");
 import { mvnScanner } from "../support/scanners/mvnScanner";
-import { sonarAgentScanner } from "../support/scanners/sonarAgentScanner";
 import {
     handleScannerError,
     handleScannerWarn,
 } from "../support/scanners/scanner";
+import { sonarAgentScanner } from "../support/scanners/sonarAgentScanner";
+import {
+    SonarScanRequestedGoal,
+} from "../typings/types";
 
 export function onRequestedSonarScanHandler(goal: Goal):
     OnEvent<SonarScanRequestedGoal.Subscription> {

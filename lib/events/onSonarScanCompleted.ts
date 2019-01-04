@@ -15,14 +15,6 @@
  */
 
 import {
-    EventHandlerRegistration,
-    findSdmGoalOnCommit,
-    Goal,
-    PushImpactResponse,
-    SdmGoalState,
-    updateGoal,
-} from "@atomist/sdm";
-import {
     configurationValue,
     GitHubRepoRef,
     GraphQL,
@@ -31,12 +23,20 @@ import {
     Success,
 } from "@atomist/automation-client";
 import {
+    EventHandlerRegistration,
+    findSdmGoalOnCommit,
+    Goal,
+    PushImpactResponse,
+    SdmGoalState,
+    updateGoal,
+} from "@atomist/sdm";
+import { SonarQubeSupportOptions } from "../..";
+import { reviewSonarAnalysisResult } from "../review/reviewSonarAnalysis";
+import { determineSonarAnalysisResult } from "../review/sonarAnalysisResult";
+import {
     GetGoalBySonarTaskData,
     SonarScanCompleted,
 } from "../typings/types";
-import { reviewSonarAnalysisResult } from "../review/reviewSonarAnalysis";
-import { determineSonarAnalysisResult } from "../review/sonarAnalysisResult";
-import { SonarQubeSupportOptions } from "../..";
 
 export function onSonarScanCompletedHandler(goal: Goal):
     OnEvent<SonarScanCompleted.Subscription> {

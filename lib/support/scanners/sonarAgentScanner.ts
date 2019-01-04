@@ -17,14 +17,11 @@
 import {
     GitProject,
     isLocalProject,
-    ProjectReview,
 } from "@atomist/automation-client";
 import {
-    CodeInspection,
     spawnLog,
     StringCapturingProgressLog,
 } from "@atomist/sdm";
-import { reviewSonarResult } from "../../review/reviewResult";
 import { SonarQubeSupportOptions } from "../../sonarQube";
 import { sonarScannerExecuter } from "./scanner";
 
