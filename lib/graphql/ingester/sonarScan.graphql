@@ -6,7 +6,7 @@ type SonarScan @rootType {
     serverUrl: String!
     status: String!
     taskId: String!
-    push: Push
+    push: Push!
         @linkTo(
             queryName: "pushBySha",
             variables: [

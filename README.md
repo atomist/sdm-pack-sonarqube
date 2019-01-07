@@ -45,6 +45,8 @@ sdm.withPushRules(
 }
 ```
 
+> Note: If your SonarQube instance does not have orgnizations enabled simply use 'default-organization' as the value
+
 4. Optional configurations
 
 > All of the configuration options below should be added to the sonar section of your config
@@ -55,6 +57,19 @@ sdm.withPushRules(
   * `mvnSonarArgs`: Array of strings that should be passed to the Maven based Sonar scanner.  Optional.  This configuration item allows you to supply additional items, if required.
   * `warnOnMissingViableConfig`: Should we issue a warning (instead of fail by default) if there is no way to determine how to run a Sonar scan?  This would be the case where it's not a Maven project and is missing a sonar-project.properties file.  If enabled, this will issue a warning in the Chat channel connected to this project, but your goals will not be failed. (Valid values, true/false.  Default behavior is false.)
   * `warnOnFailedQualityGate`: Should we issue a warning (instead of fail by default) if a quality gate fails? (Valid values, true/false.  Default behavior is false.)
+  * `cloneDepth`: Shall we perform a full clone of the git repository?  To make scans run faster, you may set this to `false`.  However, SonarQube may not be able to auto-assign tickets based on git history if you set this to false (Atomist will perform a shallow clone at that point).  (Valid values, true/false.  Default behavior is true).
+
+5. Configure Webhooks
+
+The SonarQube pack relies on webhooks being sent into atomist in order to process the results of your scans.  To configure a webhook, see the Sonar documentation [here](https://docs.sonarqube.org/latest/project-administration/webhooks/).  You may use Global or project level webhooks (though global are much more simple to manage).  In order to obtain the value for your new webhook URL, start you SDM and review the log entry for the registration endpoints.  In your log you will see something like this:
+
+```
+2019-01-07T04:18:46.236Z [m:64250] [info ] Registration successful: {"url":"wss://automation.atomist.com/registration/session:23658290-df49-49a 4-85dc-f9708c2bc2cf","jwt":"session:<secret>","endpoints":[{"url":"https://webhook.atomist.com/atomist/teams/<id>/ingestion/SonarScan/<secret>","team_id":"<id>","name":"SonarScan"}],"name":"ipcrmdemo-sdm","version":"0.1. 0"}
+```
+
+The url you want to use (in this example) is this one: `https://webhook.atomist.com/atomist/teams/<id>/ingestion/SonarScan/<secret>`
+
+This URL should be the destination address for your webhook in SonarQube's configuration.
 
 
 ## Support

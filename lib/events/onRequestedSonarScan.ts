@@ -58,7 +58,7 @@ export function onRequestedSonarScanHandler(goal: Goal):
                 },
                 repoRef,
                 {
-                    alwaysDeep: true,
+                    alwaysDeep: configurationValue<boolean>("sdm.sonar.cloneDepth", true),
                     detachHead: true,
                 },
             );
