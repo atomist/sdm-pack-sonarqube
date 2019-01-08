@@ -31,8 +31,6 @@ import {
     NodeModulesProjectListener,
 } from "@atomist/sdm-pack-node";
 import { SonarScan } from "../.";
-import { onRequestedSonarScan } from "../lib/events/onRequestedSonarScan";
-import { onSonarScanCompleted } from "../lib/events/onSonarScanCompleted";
 import { sonarQubeSupport } from "../lib/sonarQube";
 // import { sonarQubeSupport } from "../lib/sonarQube";
 

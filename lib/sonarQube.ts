@@ -22,7 +22,6 @@ import {
     Goal,
     metadata,
 } from "@atomist/sdm";
-import { onRequestedSonarScan } from "./events/onRequestedSonarScan";
 import { onSonarScanCompleted } from "./events/onSonarScanCompleted";
 
 /**
@@ -83,7 +82,6 @@ export function sonarQubeSupport(goal: Goal): ExtensionPack {
             "sdm.sonar.token",
         ],
         configure: sdm => {
-            sdm.addEvent(onRequestedSonarScan(goal));
             sdm.addEvent(onSonarScanCompleted(goal));
             sdm.addIngester(GraphQL.ingester({
                 name: "sonarScan",

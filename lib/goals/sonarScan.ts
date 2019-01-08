@@ -16,11 +16,17 @@
 
 import {
     DefaultGoalNameGenerator,
+    ExecuteGoal,
     FulfillableGoal,
     FulfillableGoalDetails,
     getGoalDefinitionFrom,
     Goal,
+    Implementation,
+    not,
+    predicatePushTest,
 } from "@atomist/sdm";
+import { mvnScanner } from "../support/scanners/mvnScanner";
+import { sonarAgentScanner } from "../support/scanners/sonarAgentScanner";
 
 export class SonarScan extends FulfillableGoal {
     constructor(private readonly details: FulfillableGoalDetails = {
@@ -42,7 +48,28 @@ export class SonarScan extends FulfillableGoal {
         }, ...dependsOn);
 
         this.addFulfillment({
-            name: "@atomist/sonar-scan",
-        });
+            name: DefaultGoalNameGenerator.generateName("mvn-scanner"),
+            goalExecutor: mvnScanner,
+            pushTest: predicatePushTest(
+                    "mavenProject",
+                    async p => {
+                        return p.hasFile("pom.xml");
+                    },
+                ),
+            },
+        );
+
+        this.addFulfillment({
+            name: DefaultGoalNameGenerator.generateName("sonar-scanner"),
+            goalExecutor: sonarAgentScanner,
+            pushTest: not(predicatePushTest(
+                    "nonMavenProject",
+                    async p => {
+                        return p.hasFile("pom.xml");
+                    },
+                )),
+            },
+        );
+
     }
 }
