@@ -16,14 +16,17 @@
 
 import {
     DefaultGoalNameGenerator,
-    ExecuteGoal,
     FulfillableGoal,
     FulfillableGoalDetails,
     getGoalDefinitionFrom,
     Goal,
-    Implementation,
     not,
     predicatePushTest,
+    RepoContext,
+    SdmGoalEvent,
+    SdmGoalState,
+    slackErrorMessage,
+    slackInfoMessage,
 } from "@atomist/sdm";
 import { mvnScanner } from "../support/scanners/mvnScanner";
 import { sonarAgentScanner } from "../support/scanners/sonarAgentScanner";
@@ -49,7 +52,7 @@ export class SonarScan extends FulfillableGoal {
 
         this.addFulfillment({
             name: DefaultGoalNameGenerator.generateName("mvn-scanner"),
-            goalExecutor: mvnScanner,
+            goalExecutor: mvnScanner(),
             pushTest: predicatePushTest(
                     "mavenProject",
                     async p => {
@@ -61,7 +64,7 @@ export class SonarScan extends FulfillableGoal {
 
         this.addFulfillment({
             name: DefaultGoalNameGenerator.generateName("sonar-scanner"),
-            goalExecutor: sonarAgentScanner,
+            goalExecutor: sonarAgentScanner(),
             pushTest: not(predicatePushTest(
                     "nonMavenProject",
                     async p => {
@@ -70,6 +73,5 @@ export class SonarScan extends FulfillableGoal {
                 )),
             },
         );
-
     }
 }

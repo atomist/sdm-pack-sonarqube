@@ -57,7 +57,7 @@ sdm.withPushRules(
   * `mvnSonarArgs`: Array of strings that should be passed to the Maven based Sonar scanner.  Optional.  This configuration item allows you to supply additional items, if required.
   * `warnOnMissingViableConfig`: Should we issue a warning (instead of fail by default) if there is no way to determine how to run a Sonar scan?  This would be the case where it's not a Maven project and is missing a sonar-project.properties file.  If enabled, this will issue a warning in the Chat channel connected to this project, but your goals will not be failed. (Valid values, true/false.  Default behavior is false.)
   * `warnOnFailedQualityGate`: Should we issue a warning (instead of fail by default) if a quality gate fails? (Valid values, true/false.  Default behavior is false.)
-  * `cloneDepth`: Shall we perform a full clone of the git repository?  To make scans run faster, you may set this to `false`.  However, SonarQube may not be able to auto-assign tickets based on git history if you set this to false (Atomist will perform a shallow clone at that point).  (Valid values, true/false.  Default behavior is true).
+  * `cloneDeep`: Shall we perform a full clone of the git repository?  To make scans run faster, you may set this to `false`.  However, SonarQube may not be able to auto-assign tickets based on git history if you set this to false (Atomist will perform a shallow clone at that point).  (Valid values, true/false.  Default behavior is true).
 
 5. Configure Webhooks
 
