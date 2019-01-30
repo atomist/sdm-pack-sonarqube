@@ -16,7 +16,6 @@
 
 import {
     Configuration,
-    GraphQL,
 } from "@atomist/automation-client";
 import {
     onAnyPush,
@@ -27,12 +26,8 @@ import {
     configureSdm,
     createSoftwareDeliveryMachine,
 } from "@atomist/sdm-core";
-import {
-    NodeModulesProjectListener,
-} from "@atomist/sdm-pack-node";
 import { SonarScan } from "../.";
 import { sonarQubeSupport } from "../lib/sonarQube";
-// import { sonarQubeSupport } from "../lib/sonarQube";
 
 export function machineMaker(config: SoftwareDeliveryMachineConfiguration): SoftwareDeliveryMachine {
 
