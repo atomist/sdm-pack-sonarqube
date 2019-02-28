@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+ /* tslint:disable */
+
 // ====================================================
 // START: Typescript template
 // ====================================================
