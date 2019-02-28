@@ -5,7 +5,7 @@ node_modules/
 npm-debug.log
 *.d.ts
 *.js.map
-
+lib/typings/types.ts
 .idea/
 *.iml
 .idea/workspace.xml
@@ -17,3 +17,4 @@ git-info.json
 /*-v8.log
 /profile.txt
 /log
+doc

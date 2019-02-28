@@ -57,21 +57,25 @@ export const determineSonarAnalysisResult = async (
         });
 
         if (globalStatus[0].severity === "error") {
-            await ctx.messageClient.addressChannels(slackErrorMessage(
-                "SonarQube/SonarCloud Quality Gate Failed!",
-                `Find more details <${details.url}|here>\n\n` +
-                "*Metric Detail*\n" +
-                metricDetail.join("\n"),
-                ctx,
-            ), channels);
+            if (channels.length > 0) {
+                await ctx.messageClient.addressChannels(slackErrorMessage(
+                    "SonarQube/SonarCloud Quality Gate Failed!",
+                    `Find more details <${details.url}|here>\n\n` +
+                    "*Metric Detail*\n" +
+                    metricDetail.join("\n"),
+                    ctx,
+                ), channels);
+            }
             return PushImpactResponse.failGoals;
         } else {
-            await ctx.messageClient.addressChannels(slackInfoMessage(
-                "SonarQube/SonarCloud Quality Gate Passed!",
-                `Find more details <${details.url}|here>\n\n` +
-                "*Metric Detail*\n" +
-                metricDetail.join("\n"),
-            ), channels);
+            if (channels.length > 0) {
+                await ctx.messageClient.addressChannels(slackInfoMessage(
+                    "SonarQube/SonarCloud Quality Gate Passed!",
+                    `Find more details <${details.url}|here>\n\n` +
+                    "*Metric Detail*\n" +
+                    metricDetail.join("\n"),
+                ), channels);
+            }
             return PushImpactResponse.proceed;
         }
     };
