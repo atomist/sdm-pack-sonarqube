@@ -1,0 +1,33 @@
+subscription SonarScanCompleted {
+  SonarScan {
+    project {
+      name
+      key
+    }
+    push @required {
+      branch
+      commits {
+        sha
+        repo {
+          owner
+          name
+          channels {
+            name
+          }
+        }
+      }
+    }
+    qualityGate {
+      conditions {
+        errorThreshold
+        metric
+        onLeakPeriod
+        operator
+        status
+        value
+      }
+    }
+    status
+    taskId
+  }
+}

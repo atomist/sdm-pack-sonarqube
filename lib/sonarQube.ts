@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,49 +15,79 @@
  */
 
 import {
-    AutoCodeInspection,
+    GraphQL,
+} from "@atomist/automation-client";
+import {
     ExtensionPack,
+    Goal,
     metadata,
-    ReviewListenerRegistration,
 } from "@atomist/sdm";
-import { sonarQubeReviewer } from "./support/sonarQubeReviewer";
+import { onSonarScanCompleted } from "./events/onSonarScanCompleted";
 
 /**
- * Options determining what Spring functionality is activated.
+ * Options for SonarQube Scanning
  */
 export interface SonarQubeSupportOptions {
-
-    enabled: boolean;
+    /**
+     * The base URL to your SonarQube instance
+     */
     url: string;
+
+    /**
+     * The Organization within SonarQube your projects live in
+     */
     org: string;
+
+    /**
+     * The API Token for the user (service account) we'll use when running scans
+     */
     token: string;
 
     /**
-     * Inspect goal to add inspections to.
-     * Review functionality won't work otherwise.
+     * Extra command arguments to supply to sonar-scanner
      */
-    inspectGoal?: AutoCodeInspection;
+    sonarScannerArgs?: string[];
 
     /**
-     * Review listeners that let you publish review results.
+     * Extra command arguments to supply to Maven/sonar:sonar
      */
-    reviewListeners?: ReviewListenerRegistration | ReviewListenerRegistration[];
+    mvnSonarArgs?: string[];
+
+    /**
+     * Path to the sonar scanner utility.  By default this pack relies on the utility to be in the SDMs path
+     */
+    sonarScannerPath?: string;
+
+    /**
+     * Should we issue a warning (instead of fail by default) if there is no way to determine how to run a Sonar scan?
+     * This would be the case where it's not a Maven project and is missing a sonar-project.properties file.  If
+     * enabled, this will issue a warning in the Chat channel connected to this project, but your goals will not be
+     * failed. (Valid values, true/false.  Default behavior is false.)
+     */
+    warnOnMissingViableConfig: boolean;
+
+    /**
+     * Should we issue a warning (instead of fail by default) if a quality gate fails?
+     * (Valid values, true/false.  Default behavior is false.)
+     */
+    warnOnFailedQualityGate: boolean;
 }
 
-export function sonarQubeSupport(options: SonarQubeSupportOptions): ExtensionPack {
+export function sonarQubeSupport(goal: Goal): ExtensionPack {
     return {
         ...metadata(),
-        configure: () => {
+        requiredConfigurationValues: [
+            "sdm.sonar.url",
+            "sdm.sonar.org",
+            "sdm.sonar.token",
+        ],
+        configure: sdm => {
+            sdm.addEvent(onSonarScanCompleted(goal));
+            sdm.addIngester(GraphQL.ingester({
+                name: "sonarScan",
+            }));
 
-            if (!!options && options.enabled && !!options.inspectGoal) {
-                options.inspectGoal.with(sonarQubeReviewer(options));
-
-                if (options.reviewListeners) {
-                    const listeners = Array.isArray(options.reviewListeners) ?
-                        options.reviewListeners : [options.reviewListeners];
-                    listeners.forEach(l => options.inspectGoal.withListener(l));
-                }
-            }
+            return sdm;
         },
     };
 }
