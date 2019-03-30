@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Add Support for Non-Maven Scanning, plus a range of usability options . [#24](https://github.com/atomist/sdm-pack-sonarqube/issues/24)
+-   Adding linkFrom to ingester. [#29](https://github.com/atomist/sdm-pack-sonarqube/issues/29)
 
 ### Fixed
 
