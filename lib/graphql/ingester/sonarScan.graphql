@@ -1,7 +1,7 @@
 type SonarScan @rootType {
     analysedAt: String!
     project: SonarProject!
-    properties: SonarProjectProperties!
+    properties(sonar_analysis_scmBranch: String, sonar_analysis_scmRevision: String): SonarProjectProperties!
     qualityGate: SonarQualityGate!
     serverUrl: String!
     status: String!
@@ -12,6 +12,14 @@ type SonarScan @rootType {
             variables: [
                 {name: "afterSha", path: "$.properties.sonar_analysis_scmRevision"},
                 {name: "branchName", path: "$.properties.sonar_analysis_scmBranch"}
+            ]
+        )
+        @linkFrom(
+            field: { kind: LIST, name: "sonarScan" }
+            query: "query sonarScan($sha: String!, $branch: String!) {SonarScan { properties(sonar_analysis_scmBranch: $branch, sonar_analysis_scmRevision:$sha) { sonar_analysis_scmBranch sonar_analysis_scmRevision}}}"
+            variables: [
+                { name: "sha", path: "$.after.sha" }
+                { name: "branch", path: "$.branch" }
             ]
         )
 }
