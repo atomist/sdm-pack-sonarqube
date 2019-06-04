@@ -25,8 +25,9 @@
     "url": "https://github.com/atomist/sdm-pack-sonarqube/issues"
   },
   "dependencies": {
-    "lodash": "^4.17.11",
-    "@types/lodash": "^4.14.118"
+    "@atomist/microgrammar": "^1.2.0",
+    "@types/lodash": "^4.14.118",
+    "lodash": "^4.17.11"
   },
   "peerDependencies": {
     "@atomist/automation-client": ">=1.3.0",
@@ -35,23 +36,22 @@
     "@atomist/sdm-pack-spring": ">=1.1.0"
   },
   "devDependencies": {
-    "@atomist/automation-client": "^1.3.0",
-    "@atomist/sdm": "^1.3.0",
-    "@atomist/sdm-core": "^1.3.0",
+    "@atomist/automation-client": "^1.5.2",
+    "@atomist/sdm": "^1.5.0",
+    "@atomist/sdm-core": "^1.5.0",
     "@atomist/sdm-pack-spring": "^1.1.0",
     "@types/mocha": "^5.2.5",
-    "@types/node": "^10.12.3",
-    "@types/power-assert": "^1.4.29",
-    "espower-typescript": "^9.0.1",
-    "mocha": "^5.2.0",
+    "@types/power-assert": "^1.5.0",
+    "espower-typescript": "^9.0.2",
+    "mocha": "^6.0.2",
     "npm-run-all": "^4.1.5",
-    "power-assert": "^1.4.4",
-    "rimraf": "^2.6.2",
+    "power-assert": "^1.6.1",
+    "rimraf": "^2.6.3",
     "supervisor": "^0.12.0",
-    "ts-node": "^7.0.1",
-    "tslint": "^5.11.0",
-    "typedoc": "^0.13.0",
-    "typescript": "^3.1.6"
+    "ts-node": "^8.0.3",
+    "tslint": "^5.14.0",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.3.4000"
   },
   "directories": {
     "test": "test"

@@ -15,19 +15,16 @@
  */
 
 import {
+    allSatisfied,
     DefaultGoalNameGenerator,
     FulfillableGoal,
     FulfillableGoalDetails,
     getGoalDefinitionFrom,
     Goal,
     not,
-    predicatePushTest,
-    RepoContext,
-    SdmGoalEvent,
-    SdmGoalState,
-    slackErrorMessage,
-    slackInfoMessage,
 } from "@atomist/sdm";
+import {sonarIsDotNetCore, sonarIsMaven} from "../support/pushTests";
+import {dotNetCoreScanner} from "../support/scanners/dotNetCoreScanner";
 import { mvnScanner } from "../support/scanners/mvnScanner";
 import { sonarAgentScanner } from "../support/scanners/sonarAgentScanner";
 
@@ -50,27 +47,25 @@ export class SonarScan extends FulfillableGoal {
             ),
         }, ...dependsOn);
 
+        // Maven Scanner
         this.addFulfillment({
             name: DefaultGoalNameGenerator.generateName("mvn-scanner"),
             goalExecutor: mvnScanner(),
-            pushTest: predicatePushTest(
-                    "mavenProject",
-                    async p => {
-                        return p.hasFile("pom.xml");
-                    },
-                ),
-            },
-        );
+            pushTest: sonarIsMaven,
+        });
 
+        // DotNetCore Projects
+        this.addFulfillment({
+            name: DefaultGoalNameGenerator.generateName("dotnetcore-scanner"),
+            goalExecutor: dotNetCoreScanner(),
+            pushTest: sonarIsDotNetCore,
+        });
+
+        // Sonar-scanner utility
         this.addFulfillment({
             name: DefaultGoalNameGenerator.generateName("sonar-scanner"),
             goalExecutor: sonarAgentScanner(),
-            pushTest: not(predicatePushTest(
-                    "nonMavenProject",
-                    async p => {
-                        return p.hasFile("pom.xml");
-                    },
-                )),
+            pushTest: allSatisfied(not(sonarIsMaven), not(sonarIsDotNetCore)),
             },
         );
     }
