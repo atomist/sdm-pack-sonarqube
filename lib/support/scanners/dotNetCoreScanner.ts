@@ -23,7 +23,7 @@ import {
     ExecuteGoal,
     SdmGoalState,
 } from "@atomist/sdm";
-import {SonarQubeSupportOptions} from "../../sonarQube";
+import { SonarQubeSupportOptions } from "../../sonarQube";
 
 export function dotNetCoreScanner(): ExecuteGoal {
     return doWithProject(

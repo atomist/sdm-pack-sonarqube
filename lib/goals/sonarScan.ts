@@ -23,8 +23,11 @@ import {
     Goal,
     not,
 } from "@atomist/sdm";
-import {sonarIsDotNetCore, sonarIsMaven} from "../support/pushTests";
-import {dotNetCoreScanner} from "../support/scanners/dotNetCoreScanner";
+import {
+    sonarIsDotNetCore,
+    sonarIsMaven,
+} from "../support/pushTests";
+import { dotNetCoreScanner } from "../support/scanners/dotNetCoreScanner";
 import { mvnScanner } from "../support/scanners/mvnScanner";
 import { sonarAgentScanner } from "../support/scanners/sonarAgentScanner";
 
