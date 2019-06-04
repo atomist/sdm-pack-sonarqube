@@ -6,10 +6,12 @@
 Extension Pack for an Atomist SDM to integrate [SonarQube](https://www.sonarqube.org).
 
 ## Usage
-This SDM pack enables you to scan your projects using SonarQube/SonarCloud.  By default, the pack will fail your SDM goals if the scan does not pass your assigned quality gate (this behavior is configurable, see below).  There are two scanner types available.  The first, is the `sonar-scanner` utilty that can be used by any language.  However, this scanner does require that you supply some configuration to the scanner in the form of a `sonar-project.properties` file (more details [here](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner)).  Alternatively, if you are using Maven projects this pack will automatically use the Maven integrated Sonar plugin which does not require configuration in your project (the POM is used to extract the required details).
+This SDM pack enables you to scan your projects using SonarQube/SonarCloud.  By default, the pack will fail your SDM goals if the scan does not pass your assigned quality gate (this behavior is configurable, see below).
+
+There are three scanner types available.  The first, is the `sonar-scanner` utilty that can be used by most languages.  However, this scanner does require that you supply some configuration to the scanner in the form of a `sonar-project.properties` file (more details [here](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner)).  Alternatively, if you are using Maven projects this pack will automatically use the Maven integrated Sonar plugin which does not require configuration in your project (the POM is used to extract the required details).  Finally, the pack also supports using the .NET Core `sonarscanner` tool.  You must install this tool prior to analyzing projects of this type.  Docs can be found [here](https://docs.sonarqube.org/display/SCAN/Install+the+SonarScanner+for+MSBuild).
 
 ### Prereq
-If you are working on projects that do not use Maven, you must install the Sonar Scanner utility.  See instructions [here](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner)
+If you are working on projects that use Maven, you must install java and the maven utility. For .NET Core, you must install the `sonarscanner` tool as mentioned above in [usage](#usage).  Finally, for other languages use Sonar Scanner utility.  See install instructions [here](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner)
 
 ### Setup
 1. First install the dependency in your SDM project
@@ -70,7 +72,6 @@ The SonarQube pack relies on webhooks being sent into atomist in order to proces
 The url you want to use (in this example) is this one: `https://webhook.atomist.com/atomist/teams/<id>/ingestion/SonarScan/<secret>`
 
 This URL should be the destination address for your webhook in SonarQube's configuration.
-
 
 ## Support
 
