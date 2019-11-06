@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-import {projectUtils} from "@atomist/automation-client";
+import { projectUtils } from "@atomist/automation-client";
 import { microgrammar } from "@atomist/microgrammar";
-import {PredicatePushTest, predicatePushTest} from "@atomist/sdm";
+import {
+    predicatePushTest,
+    PredicatePushTest,
+} from "@atomist/sdm";
 
 export const sonarIsMaven = predicatePushTest(
     "mavenProject",
