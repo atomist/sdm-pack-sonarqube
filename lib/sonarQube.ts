@@ -54,6 +54,11 @@ export interface SonarQubeSupportOptions {
     mvnSonarArgs?: string[];
 
     /**
+     * Extra command arguments to supply to dotnet sonarscanner
+     */
+    dotNetCoreArgs?: string[];
+
+    /**
      * Path to the sonar scanner utility.  By default this pack relies on the utility to be in the SDMs path
      */
     sonarScannerPath?: string;
