@@ -6,6 +6,9 @@ subscription SonarScanCompleted {
     }
     push @required {
       branch
+      after {
+        sha
+      }
       commits {
         sha
         repo {
