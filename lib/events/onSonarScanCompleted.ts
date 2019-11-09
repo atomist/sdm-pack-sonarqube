@@ -46,7 +46,7 @@ export function onSonarScanCompletedHandler(goal: Goal):
             const repoRef = GitHubRepoRef.from({
                 owner: e.data.SonarScan[0].push.commits[0].repo.owner,
                 repo:  e.data.SonarScan[0].push.commits[0].repo.name,
-                sha: e.data.SonarScan[0].push.commits[e.data.SonarScan[0].push.commits.length - 1].sha,
+                sha: e.data.SonarScan[0].push.after.sha,
                 branch: e.data.SonarScan[0].push.branch,
             });
 
